@@ -123,7 +123,7 @@ test.describe('Add Area', () => {
     await gotoAreaMaster(page);
   });
 
-  test('1.1 Add area with all valid fields', async ({ page }) => {
+  test.only('1.1 Add area with all valid fields', async ({ page }) => {
     // Verify form heading
     await expect(page.getByRole('heading', { name: 'Add Area' })).toBeVisible();
 

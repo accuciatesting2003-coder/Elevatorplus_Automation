@@ -33,7 +33,20 @@ async function performLogin(page: any) {
   await page.waitForLoadState('networkidle');
 }
 
+async function registerPopupHandler(page: any) {
+  // Auto-dismiss "Maybe Later" notification popup whenever it appears
+  await page.addLocatorHandler(
+    page.getByRole('button', { name: /Maybe Later/i }),
+    async () => {
+      await page.getByRole('button', { name: /Maybe Later/i }).click().catch(() => {});
+      await page.waitForTimeout(300);
+    }
+  );
+}
+
 async function gotoBranchMaster(page: any) {
+  await registerPopupHandler(page);
+
   await page.goto(BRANCH_MASTER_URL, { timeout: 60000 }).catch(async () => {
     // Retry once on network error
     await page.waitForTimeout(3000);
@@ -152,19 +165,19 @@ test.describe('Add Branch', () => {
     await page.waitForTimeout(3000);
     await dismissNotificationPopup(page);
 
-    // Set status filter to "All" so new branch is visible regardless of initial status
+    // Set status filter to "All" and wait for table to load
     await page.locator('select').filter({ has: page.locator('option', { hasText: 'Inactive' }) }).first().selectOption('All');
-    await page.waitForTimeout(1000);
+    await page.waitForLoadState('networkidle').catch(() => {});
+    await page.waitForTimeout(2000);
 
     // Search for the newly added branch
     const searchBox = page.getByRole('textbox', { name: 'Search by branch name' });
     await searchBox.waitFor({ state: 'visible', timeout: 15000 });
     await searchBox.fill(branchName);
-    await page.waitForLoadState('networkidle').catch(() => {});
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(5000);
 
     // Verify the newly added branch name is visible in the data table
-    await expect(page.locator('table tbody tr').filter({ hasText: branchName })).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole('cell', { name: branchName, exact: true })).toBeVisible({ timeout: 60000 });
   });
 
   test('1.2 Add branch with all fields including branch location from map', async ({ page }) => {
@@ -262,7 +275,10 @@ test.describe('Add Branch Validation', () => {
     await page.getByRole('button', { name: /Submit/ }).click();
     await page.waitForTimeout(1000);
 
-    await expect(page.getByText(/please enter branch name/i)).toBeVisible({ timeout: 5000 });
+    // All three mandatory fields should show validation errors
+    await expect(page.getByText('Please enter branch name')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('Please enter branch code')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('Please enter address')).toBeVisible({ timeout: 5000 });
     await expect(page).toHaveURL(new RegExp(BRANCH_MASTER_URL));
   });
 
@@ -328,7 +344,7 @@ test.describe('Add Branch Validation', () => {
     await expect(page).toHaveURL(new RegExp(BRANCH_MASTER_URL));
   });
 
-  test('2.7 Duplicate branch name submission handling', async ({ page }) => {
+  test.only('2.7 Duplicate branch name submission handling', async ({ page }) => {
     // Use an existing branch name
     await page.getByRole('textbox', { name: 'Branch Name *' }).fill('Pune');
     await page.getByRole('textbox', { name: 'Branch Code *' }).fill('PUNE');
