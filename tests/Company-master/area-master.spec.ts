@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../fixtures/auth-fixture';
 
 const AREA_MASTER_URL = '/master/area-master';
 
@@ -6,72 +6,42 @@ const AREA_MASTER_URL = '/master/area-master';
 // Helpers
 // ─────────────────────────────────────────────────────────────────────────────
 
-async function performLogin(page: any) {
-  const mobile = process.env.MOBILE_NUMBER || '9209365301';
-  const password = process.env.PASSWORD || 'Shravani@123';
-
-  const passwordInput = page.locator('input[type="password"]');
-  const passwordAlreadyVisible = await passwordInput.isVisible({ timeout: 3000 }).catch(() => false);
-
-  if (!passwordAlreadyVisible) {
-    // Enter mobile number first
-    const loginInput = page.locator('.form-control').first();
-    await loginInput.waitFor({ state: 'visible', timeout: 10000 });
-    await loginInput.focus();
-    await page.keyboard.press('End');
-    await page.keyboard.type(mobile);
-    await page.getByRole('button', { name: 'Login' }).click();
-    await page.waitForTimeout(3000);
-  }
-
-  // Fill password if visible
-  const pwdVisible = await passwordInput.isVisible({ timeout: 5000 }).catch(() => false);
-  if (pwdVisible) {
-    await passwordInput.fill(password);
-    await page.getByRole('button', { name: 'Login' }).click();
-  }
-
-  await page.waitForURL((url: URL) => !url.pathname.includes('/login'), { timeout: 30000 });
-  await page.waitForLoadState('networkidle');
-  await dismissNotificationPopup(page);
-}
-
 async function gotoAreaMaster(page: any) {
-  await page.goto(AREA_MASTER_URL);
-
-  // Wait for page to fully settle (including any client-side redirects)
-  await page.waitForLoadState('networkidle').catch(() => {});
-  await page.waitForTimeout(2000);
+  await registerPopupHandler(page);
+  await page.goto(AREA_MASTER_URL, { timeout: 60000 });
+  await page.getByRole('heading', { name: 'Add Area' }).waitFor({ state: 'visible', timeout: 45000 });
   await dismissNotificationPopup(page);
-
-  // Check if redirected to login page
-  if (page.url().includes('/login')) {
-    await performLogin(page);
-    // Navigate to area-master after login
-    if (!page.url().includes('area-master')) {
-      await page.goto(AREA_MASTER_URL);
-      await page.waitForLoadState('networkidle').catch(() => {});
-    }
-  }
-
-  // Wait for the Add Area form to load
-  await page.getByRole('heading', { name: 'Add Area' }).waitFor({ state: 'visible', timeout: 60000 });
 }
 
 async function waitForTableRows(page: any) {
-  await page.locator('table tbody tr').first().waitFor({ state: 'visible', timeout: 15000 });
+  // The grid is react-data-table-component — rows are div[role="row"], not <tr>
+  await page.locator('div.rdt_TableRow').first().waitFor({ state: 'visible', timeout: 30000 });
 }
 
 /**
  * Dismiss the "Enable Notifications" popup if it appears after login.
  * The popup is intermittent – this helper never throws if it is absent.
  */
+async function registerPopupHandler(page: any) {
+  await page.addLocatorHandler(
+    page.getByRole('button', { name: /Maybe Later/i }),
+    async () => {
+      await page.getByRole('button', { name: /Maybe Later/i }).click().catch(() => {});
+    }
+  );
+}
+
 async function dismissNotificationPopup(page: any) {
   try {
-    // Wait briefly for the popup to appear
-    const enableBtn = page.getByRole('button', { name: /enable/i });
-    const visible = await enableBtn.isVisible({ timeout: 5000 }).catch(() => false);
+    const maybeLater = page.getByRole('button', { name: /Maybe Later/i });
+    const visible = await maybeLater.isVisible({ timeout: 5000 }).catch(() => false);
     if (visible) {
+      await maybeLater.click();
+      return;
+    }
+    const enableBtn = page.getByRole('button', { name: /enable/i });
+    const enableVisible = await enableBtn.isVisible({ timeout: 3000 }).catch(() => false);
+    if (enableVisible) {
       await enableBtn.click();
       await page.waitForTimeout(500);
     }
@@ -79,6 +49,7 @@ async function dismissNotificationPopup(page: any) {
     // Popup did not appear – continue normally
   }
 }
+
 
 /**
  * Select a branch from the custom dropdown.
@@ -107,10 +78,11 @@ async function getSearchBox(page: any) {
 }
 
 /**
- * Click the Edit icon (img "Edit") on a specific table row.
+ * Click the Edit icon on a specific data row.
+ * DOM: react-data-table-component rows are div[role="row"]; the edit button is an SVG with title="Edit".
  */
 async function clickEditOnRow(page: any, rowIndex: number = 0) {
-  await page.locator('table tbody tr').nth(rowIndex).getByRole('img', { name: 'Edit' }).click();
+  await page.locator('div.rdt_TableRow').nth(rowIndex).locator('svg[title="Edit"]').click();
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -123,7 +95,7 @@ test.describe('Add Area', () => {
     await gotoAreaMaster(page);
   });
 
-  test.only('1.1 Add area with all valid fields', async ({ page }) => {
+  test('1.1 Add area with all valid fields', async ({ page }) => {
     // Verify form heading
     await expect(page.getByRole('heading', { name: 'Add Area' })).toBeVisible();
 
@@ -240,11 +212,11 @@ test.describe('Add Area Validation', () => {
   test('2.6 Inactivate active record then adding same area name shows error', async ({ page }) => {
     await waitForTableRows(page);
 
-    // Get area name and branch from first active row
-    const firstRow = page.locator('table tbody tr').first();
-    const branchName = await firstRow.locator('td').nth(2).innerText();
-    const areaName = await firstRow.locator('td').nth(3).innerText();
-    const areaCode = await firstRow.locator('td').nth(4).innerText();
+    // Get area name and branch from first active row (rdt uses div[role="cell"], not td)
+    const firstRow = page.locator('div.rdt_TableRow').first();
+    const branchName = await firstRow.locator('[role="cell"]').nth(2).innerText();
+    const areaName = await firstRow.locator('[role="cell"]').nth(3).innerText();
+    const areaCode = await firstRow.locator('[role="cell"]').nth(4).innerText();
 
     // Edit the first row and set it to Inactive
     await clickEditOnRow(page, 0);
@@ -270,11 +242,11 @@ test.describe('Add Area Validation', () => {
     await page.waitForLoadState('networkidle').catch(() => {});
     await page.waitForTimeout(1000);
 
-    // Restore: switch filter to Inactive and reactivate the record
+    // Restore: use All filter so the record is findable regardless of pagination
     const statusFilter = page.locator('select').filter({ hasText: /All.*Active.*Inactive/ });
-    await statusFilter.selectOption('Inactive');
+    await statusFilter.selectOption('All');
     await waitForTableRows(page);
-    await page.locator('table tbody tr').filter({ hasText: areaName }).getByRole('img', { name: 'Edit' }).first().click();
+    await page.locator('div.rdt_TableRow').filter({ hasText: areaName }).locator('svg[title="Edit"]').first().click();
     await page.locator('select').filter({ hasText: /Active|Inactive/ }).last().selectOption('Active');
     await page.getByRole('button', { name: /Update/ }).click();
   });
@@ -294,9 +266,9 @@ test.describe('Add Area Validation', () => {
 
     // Step 2: Inactivate the newly created area
     await waitForTableRows(page);
-    await page.locator('table tbody tr')
+    await page.locator('div.rdt_TableRow')
       .filter({ hasText: inactiveAreaName })
-      .getByRole('img', { name: 'Edit' })
+      .locator('svg[title="Edit"]')
       .first()
       .click();
     await expect(page.getByRole('heading', { name: 'Update Area' })).toBeVisible();
@@ -318,7 +290,7 @@ test.describe('Add Area Validation', () => {
 
     // Negative assertion: record must NOT have been created (table should not contain a new row for Nagpur with this name)
     await waitForTableRows(page);
-    const nagpurDuplicateRows = page.locator('table tbody tr').filter({ hasText: inactiveAreaName }).filter({ hasText: 'Nagpur' });
+    const nagpurDuplicateRows = page.locator('div.rdt_TableRow').filter({ hasText: inactiveAreaName }).filter({ hasText: 'Nagpur' });
     await expect(nagpurDuplicateRows).toHaveCount(0);
 
     // Step 4: Try to update an existing Nagpur record to use the same inactive area name
@@ -327,10 +299,10 @@ test.describe('Add Area Validation', () => {
     await statusFilter.selectOption('All');
     await waitForTableRows(page);
 
-    const nagpurRows = page.locator('table tbody tr').filter({ hasText: 'Nagpur' });
+    const nagpurRows = page.locator('div.rdt_TableRow').filter({ hasText: 'Nagpur' });
     const nagpurCount = await nagpurRows.count();
     if (nagpurCount > 0) {
-      await nagpurRows.first().getByRole('img', { name: 'Edit' }).click();
+      await nagpurRows.first().locator('svg[title="Edit"]').click();
       await expect(page.getByRole('heading', { name: 'Update Area' })).toBeVisible();
 
       // Change area name to the inactive duplicate name
@@ -350,9 +322,9 @@ test.describe('Add Area Validation', () => {
     // Cleanup: restore the original inactive area back to Active
     await statusFilter.selectOption('Inactive');
     await waitForTableRows(page);
-    await page.locator('table tbody tr')
+    await page.locator('div.rdt_TableRow')
       .filter({ hasText: inactiveAreaName })
-      .getByRole('img', { name: 'Edit' })
+      .locator('svg[title="Edit"]')
       .first()
       .click();
     await page.locator('select').filter({ hasText: /Active|Inactive/ }).last().selectOption('Active');
@@ -364,17 +336,17 @@ test.describe('Add Area Validation', () => {
 
     // ── Step 1: Read the first active Pune row ────────────────────────────────
     // Filter to Active (default) and find a Pune row to work with
-    const puneRow = page.locator('table tbody tr').filter({ hasText: 'Pune' }).first();
+    const puneRow = page.locator('div.rdt_TableRow').filter({ hasText: 'Pune' }).first();
     const puneRowCount = await puneRow.count();
     if (puneRowCount === 0) {
       test.skip();
       return;
     }
 
-    const targetAreaName = await puneRow.locator('td').nth(3).innerText();
+    const targetAreaName = await puneRow.locator('[role="cell"]').nth(3).innerText();
 
     // ── Step 2: Inactivate the Pune record ────────────────────────────────────
-    await puneRow.getByRole('img', { name: 'Edit' }).click();
+    await puneRow.locator('svg[title="Edit"]').click();
     await expect(page.getByRole('heading', { name: 'Update Area' })).toBeVisible();
     await page.locator('select').filter({ hasText: /Active|Inactive/ }).last().selectOption('Inactive');
     await page.getByRole('button', { name: /Update/ }).click();
@@ -397,7 +369,7 @@ test.describe('Add Area Validation', () => {
     // Negative assertion: the record must NOT appear in the table under Nagpur
     await waitForTableRows(page);
     await expect(
-      page.locator('table tbody tr').filter({ hasText: targetAreaName }).filter({ hasText: 'Nagpur' })
+      page.locator('div.rdt_TableRow').filter({ hasText: targetAreaName }).filter({ hasText: 'Nagpur' })
     ).toHaveCount(0);
 
     // ── Step 4: Try to EDIT an existing Nagpur record to the same area name ───
@@ -405,11 +377,11 @@ test.describe('Add Area Validation', () => {
     await statusFilter.selectOption('All');
     await waitForTableRows(page);
 
-    const nagpurRow = page.locator('table tbody tr').filter({ hasText: 'Nagpur' }).first();
+    const nagpurRow = page.locator('div.rdt_TableRow').filter({ hasText: 'Nagpur' }).first();
     const nagpurExists = await nagpurRow.count();
 
     if (nagpurExists > 0) {
-      await nagpurRow.getByRole('img', { name: 'Edit' }).click();
+      await nagpurRow.locator('svg[title="Edit"]').click();
       await expect(page.getByRole('heading', { name: 'Update Area' })).toBeVisible();
 
       await page.getByRole('textbox', { name: 'Area Name' }).fill(targetAreaName);
@@ -428,10 +400,10 @@ test.describe('Add Area Validation', () => {
     // ── Cleanup: restore the Pune record back to Active ───────────────────────
     await statusFilter.selectOption('Inactive');
     await waitForTableRows(page);
-    await page.locator('table tbody tr')
+    await page.locator('div.rdt_TableRow')
       .filter({ hasText: targetAreaName })
       .filter({ hasText: 'Pune' })
-      .getByRole('img', { name: 'Edit' })
+      .locator('svg[title="Edit"]')
       .first()
       .click();
     await expect(page.getByRole('heading', { name: 'Update Area' })).toBeVisible();
@@ -485,7 +457,7 @@ test.describe('Update Area', () => {
     await waitForTableRows(page);
 
     // Get original area name from first row
-    const originalName = await page.locator('table tbody tr').first().locator('td').nth(3).innerText();
+    const originalName = await page.locator('div.rdt_TableRow').first().locator('[role="cell"]').nth(3).innerText();
 
     // Click Edit on first row
     await clickEditOnRow(page, 0);
@@ -509,11 +481,11 @@ test.describe('Update Area', () => {
 
     // Updated value reflected in table
     await waitForTableRows(page);
-    await expect(page.locator('table tbody')).toContainText(updatedName);
+    await expect(page.locator('div.rdt_TableBody')).toContainText(updatedName);
 
     // Restore original name
-    await page.locator('table tbody').getByText(updatedName).first().waitFor({ state: 'visible' });
-    await page.locator('table tbody tr').filter({ hasText: updatedName }).getByRole('img', { name: 'Edit' }).click();
+    await page.locator('div.rdt_TableBody').getByText(updatedName).first().waitFor({ state: 'visible' });
+    await page.locator('div.rdt_TableRow').filter({ hasText: updatedName }).locator('svg[title="Edit"]').click();
     await page.getByRole('textbox', { name: 'Area Name' }).fill(originalName);
     await page.getByRole('button', { name: /Update/ }).click();
   });
@@ -551,7 +523,7 @@ test.describe('Update Area', () => {
     await waitForTableRows(page);
 
     // Get original area name from first row
-    const originalName = await page.locator('table tbody tr').first().locator('td').nth(3).innerText();
+    const originalName = await page.locator('div.rdt_TableRow').first().locator('[role="cell"]').nth(3).innerText();
 
     // Click Edit
     await clickEditOnRow(page, 0);
@@ -569,21 +541,21 @@ test.describe('Update Area', () => {
 
     // Table still shows original name
     await waitForTableRows(page);
-    await expect(page.locator('table tbody tr').first()).toContainText(originalName);
+    await expect(page.locator('div.rdt_TableRow').first()).toContainText(originalName);
   });
 
   test('3.4 Edit existing record and submit with duplicate area name shows error', async ({ page }) => {
     await waitForTableRows(page);
 
     // Get the area name from the second row to use as the duplicate target
-    const rows = page.locator('table tbody tr');
+    const rows = page.locator('div.rdt_TableRow');
     const rowCount = await rows.count();
     if (rowCount < 2) {
       test.skip();
       return;
     }
 
-    const secondRowAreaName = await rows.nth(1).locator('td').nth(3).innerText();
+    const secondRowAreaName = await rows.nth(1).locator('[role="cell"]').nth(3).innerText();
 
     // Edit the first row
     await clickEditOnRow(page, 0);
@@ -647,8 +619,8 @@ test.describe('Search and Filter', () => {
     await page.waitForTimeout(1000);
 
     // Table shows filtered results
-    await expect(page.locator('table tbody tr').first()).toBeVisible();
-    const rows = page.locator('table tbody tr');
+    await expect(page.locator('div.rdt_TableRow').first()).toBeVisible();
+    const rows = page.locator('div.rdt_TableRow');
     const count = await rows.count();
     for (let i = 0; i < count; i++) {
       await expect(rows.nth(i)).toContainText('Pune');
@@ -667,8 +639,8 @@ test.describe('Search and Filter', () => {
     await page.waitForTimeout(1000);
 
     // At least one result
-    await expect(page.locator('table tbody tr').first()).toBeVisible();
-    await expect(page.locator('table tbody tr').first()).toContainText('PCMC');
+    await expect(page.locator('div.rdt_TableRow').first()).toBeVisible();
+    await expect(page.locator('div.rdt_TableRow').first()).toContainText('PCMC');
 
     // Clear
     await searchBox.fill('');
@@ -683,7 +655,7 @@ test.describe('Search and Filter', () => {
     await page.waitForTimeout(1000);
 
     // No rows visible or empty message shown
-    const rowCount = await page.locator('table tbody tr').count();
+    const rowCount = await page.locator('div.rdt_TableRow').count();
     expect(rowCount).toBeLessThanOrEqual(1); // 0 rows or 1 "no data" row
   });
 
@@ -695,10 +667,10 @@ test.describe('Search and Filter', () => {
     await expect(statusFilter).toHaveValue('Active');
 
     // All rows show Active status
-    const rows = page.locator('table tbody tr');
+    const rows = page.locator('div.rdt_TableRow');
     const count = await rows.count();
     for (let i = 0; i < count; i++) {
-      await expect(rows.nth(i).locator('td').last()).toContainText('Active');
+      await expect(rows.nth(i).locator('[role="cell"]').last()).toContainText('Active');
     }
 
     // Change to 'All'
@@ -713,14 +685,14 @@ test.describe('Search and Filter', () => {
     await statusFilter.selectOption('Inactive');
 
     // Either rows show Inactive OR empty state
-    const rowCount = await page.locator('table tbody tr').count();
+    const rowCount = await page.locator('div.rdt_TableRow').count();
     if (rowCount > 0) {
-      const rows = page.locator('table tbody tr');
+      const rows = page.locator('div.rdt_TableRow');
       for (let i = 0; i < rowCount; i++) {
-        await expect(rows.nth(i).locator('td').last()).toContainText('Inactive');
+        await expect(rows.nth(i).locator('[role="cell"]').last()).toContainText('Inactive');
       }
     } else {
-      await expect(page.locator('table tbody')).toBeVisible();
+      await expect(page.locator('div.rdt_TableBody')).toBeVisible();
     }
   });
 
@@ -733,12 +705,12 @@ test.describe('Search and Filter', () => {
 
     // Change to 10 – max 10 rows shown
     await showDropdown.selectOption('10');
-    const rowCount10 = await page.locator('table tbody tr').count();
+    const rowCount10 = await page.locator('div.rdt_TableRow').count();
     expect(rowCount10).toBeLessThanOrEqual(10);
 
     // Change to 50
     await showDropdown.selectOption('50');
-    const rowCount50 = await page.locator('table tbody tr').count();
+    const rowCount50 = await page.locator('div.rdt_TableRow').count();
     expect(rowCount50).toBeLessThanOrEqual(50);
   });
 
@@ -750,7 +722,7 @@ test.describe('Search and Filter', () => {
     await waitForTableRows(page);
 
     // Collect branch name values
-    const branchCells = page.locator('table tbody tr td:nth-child(3)');
+    const branchCells = page.locator('div.rdt_TableRow [role="cell"]:nth-child(3)');
     const count = await branchCells.count();
     const values: string[] = [];
     for (let i = 0; i < count; i++) {
@@ -842,7 +814,7 @@ test.describe('UI and UX', () => {
 
     // Edit icon (img "Edit") is present in first row
     await expect(
-      page.locator('table tbody tr').first().getByRole('img', { name: 'Edit' })
+      page.locator('div.rdt_TableRow').first().locator('svg[title="Edit"]')
     ).toBeVisible();
   });
 
@@ -851,7 +823,7 @@ test.describe('UI and UX', () => {
 
     // Active badge is an h5 heading in the DOM
     await expect(
-      page.locator('table tbody tr').first().getByRole('heading', { name: 'Active' })
+      page.locator('div.rdt_TableRow').first().getByRole('heading', { name: 'Active' })
     ).toBeVisible();
   });
 

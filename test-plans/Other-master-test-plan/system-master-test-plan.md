@@ -2,523 +2,375 @@
 
 ## Application Overview
 
-System Master is a sub-module under Other Masters in the ElevatorPlus application (https://stage.elevatorplus.net/master/system-master). It manages system records used across the application. The page has two main sections: (1) Add/Update System form with a single field — System Name (text, **required**, accepts numeric values, must be unique), and two action buttons — Submit and Clear; (2) A data table listing all system records with columns: Sr. No., Action (Edit icon), System Name, and Status. The table supports filtering by Status (All/Active/Inactive), pagination size (Show dropdown), and a search box. The form toggles between "Add System" and "Update System" modes. There is no delete functionality — only Edit.
+The System Master page is part of the ElevatorPlus Other Masters section, accessible at /master/system-master (also accessible as a tab at /master/other-master). It allows admin users to manage elevator system type records. The page has two sections: (1) an "Add System" form with one mandatory field — "System Name *" (text input, helper: "Enter your system name"), along with "Clear" and "Submit" buttons (no "⚠ Note" warning unlike other masters); (2) a data table below listing all systems with columns: Sr. No., Action (Edit icon), System Name, and Status. The table toolbar includes a Status filter (All / Active / Inactive), a rows-per-page selector (10 / 25 / 50 / 100), an "Import" button, and a labeled search field "Search: [Search System Name]". Clicking the Edit icon switches the form to "Update System" mode, pre-fills System Name, exposes a Status dropdown (Active / Inactive), and changes the button to "Update". Successful creation shows a toast: "System created successfully!". Submitting an empty System Name shows inline error. Submitting a duplicate returns a toast: "Something went wrong."
 
 ## Test Scenarios
 
-### Summary
-
-| # | Suite | Test Case | Type |
-|---|-------|-----------|------|
-| 1.1 | Add System | Submit form with a valid unique System Name → form resets on success, new row appears in table | Positive |
-| 1.2 | Add System | Submit form with a numeric-only System Name → form submits successfully | Positive |
-| 1.3 | Add System | Submit form with an alphanumeric System Name → form submits successfully | Positive |
-| 1.4 | Add System | Click Clear after filling System Name → field cleared, heading stays "Add System" | Positive |
-| 2.1 | Add System Validation | Submit with System Name empty → validation error visible | Negative |
-| 2.2 | Add System Validation | Submit duplicate System Name (active record) → error/toast visible, no duplicate row added | Negative |
-| 2.3 | Add System Validation | Inactivate an existing record → try to add the same System Name again → error visible | Negative |
-| 3.1 | Update System | Edit first row, change System Name → update succeeds, new name visible in table; original restored | Positive |
-| 3.2 | Update System | Edit first row, change status to Inactive → record moves to Inactive filter; restored to Active | Positive |
-| 3.3 | Update System | Edit first row, modify name, click Clear → form resets to Add mode, table unchanged | Positive |
-| 3.4 | Update System | Edit first row, change name to an existing active record's name → duplicate error visible | Negative |
-| 3.5 | Update System | Clear System Name in edit form → click Update → validation error, stays on "Update System" | Negative |
-| 4.1 | Data Table Verification | Add new system → verify row appears in table with correct System Name and Active status | Positive |
-| 4.2 | Data Table Verification | Search by System Name → only matching rows visible; clear search restores all records | Positive |
-| 4.3 | Data Table Verification | Search with non-existent term → empty state or "No records found" message | Negative |
-| 4.4 | Data Table Verification | Status filter default is "Active" → all visible rows show Active status | Positive |
-| 4.5 | Data Table Verification | Switch filter to Inactive → all rows show Inactive status (or empty state) | Positive |
-| 4.6 | Data Table Verification | Switch filter to All → both Active and Inactive records are visible | Positive |
-| 4.7 | Data Table Verification | Inactivate a record → switch to Inactive filter → record visible; switch to Active → record absent | Positive |
-| 4.8 | Data Table Verification | Change page size via Show dropdown: 10 → ≤10 rows; 25 → ≤25 rows; 50 → ≤50 rows | Positive |
-| 5.1 | UI and UX | All page elements visible: heading, System Name field, Submit/Clear buttons, table headers, filter/search controls | Positive |
-| 5.2 | UI and UX | System Name field accepts text, numbers, and alphanumeric values | Positive |
-| 5.3 | UI and UX | Pagination shows Previous/Page 1/Next; Previous is disabled on page 1 | Positive |
-| 5.4 | UI and UX | Edit icon present in the Action column of the first table row | Positive |
-| 5.5 | UI and UX | Status badge (Active/Inactive) is visible in the Status column of each table row | Positive |
-
-**Total: 25 tests | 5 suites | 19 Positive | 6 Negative**
-
----
-
-### 1. Add System
+### 1. Smoke Tests
 
 **Seed:** `tests/setup/auth.setup.ts`
 
-#### 1.1. Add system with a valid unique System Name
+#### 1.1. TC-SM-01: System Master page loads successfully
 
-**File:** `tests/other-master/system-master/positive/add-system-valid.spec.ts`
-
-**Steps:**
-  1. Navigate to https://stage.elevatorplus.net/master/system-master
-  2. Verify the Add System form is visible with heading 'Add System'
-  3. Enter a unique system name in the System Name field (e.g., `TestSystem<timestamp>`)
-  4. Click the Submit button
-  5. Verify a success toast/message is displayed
-  6. Verify the form field is cleared/reset after successful submission
-  7. Verify the new system row appears in the data table with the correct System Name and Active status
-
-**Expected Results:**
-  - Form accepts a valid unique system name
-  - Submit triggers the API call
-  - Success message/toast is shown
-  - Newly added system appears in the data table with the correct System Name
-  - Status defaults to Active
-  - Form resets after successful submission
-
-#### 1.2. Add system with a numeric-only System Name
-
-**File:** `tests/other-master/system-master/positive/add-system-numeric-name.spec.ts`
+**File:** `tests/Other-master/system-master.spec.ts`
 
 **Steps:**
-  1. Navigate to https://stage.elevatorplus.net/master/system-master
-  2. Enter a unique numeric-only value in the System Name field (e.g., `100<timestamp>`)
-  3. Click the Submit button
-  4. Verify a success toast/message is displayed
-  5. Verify the new row appears in the data table with the entered numeric System Name
+  1. Log in and navigate to https://stage.elevatorplus.net/master/system-master
+    - expect: The page URL should be https://stage.elevatorplus.net/master/system-master
+    - expect: The page title should be 'ElevatorPlus'
+    - expect: The 'Add System' card heading should be visible
+    - expect: The System Name input (label: 'System Name *') should be present and empty
+    - expect: Helper text 'Enter your system name' should be visible
+    - expect: No '⚠ Note' warning should be present (unlike ceiling/flooring/controller/shaft masters)
+    - expect: 'Clear' and 'Submit' buttons should be visible
+    - expect: The data table should load with columns: Sr. No., Action, System Name, Status
 
-**Expected Results:**
-  - System Name field accepts numeric values
-  - Form submits successfully with a numeric-only name
-  - New record appears in the table with the correct numeric name
+#### 1.2. TC-SM-02: Verify page elements and layout
 
-#### 1.3. Add system with an alphanumeric System Name
-
-**File:** `tests/other-master/system-master/positive/add-system-alphanumeric-name.spec.ts`
-
-**Steps:**
-  1. Navigate to https://stage.elevatorplus.net/master/system-master
-  2. Enter a unique alphanumeric value in the System Name field (e.g., `System123<timestamp>`)
-  3. Click the Submit button
-  4. Verify a success toast/message is displayed
-  5. Verify the new row appears in the data table with the entered alphanumeric System Name
-
-**Expected Results:**
-  - System Name field accepts alphanumeric input
-  - Form submits successfully
-  - New record appears in the table with the correct alphanumeric name
-
-#### 1.4. Clear form resets the System Name field
-
-**File:** `tests/other-master/system-master/positive/add-system-clear.spec.ts`
+**File:** `tests/Other-master/system-master.spec.ts`
 
 **Steps:**
-  1. Navigate to https://stage.elevatorplus.net/master/system-master
-  2. Enter a value in the System Name field (e.g., `ClearTest`)
-  3. Click the Clear button
-  4. Verify the System Name field is empty/reset
-  5. Verify the form heading still reads 'Add System'
+  1. Navigate to /master/system-master
+    - expect: The form heading reads 'Add System'
+  2. Inspect the data table toolbar
+    - expect: Show dropdown (10, 25, 50, 100 — default 25) is present
+    - expect: Status filter (All, Active, Inactive — default Active) is present
+    - expect: An 'Import' button is present
+    - expect: A 'Search:' label with 'Search System Name' input is present
+  3. Inspect the table headers
+    - expect: Columns are: Sr. No., Action, System Name, Status
+    - expect: System Name and Status have sort icons
 
-**Expected Results:**
-  - Clear button empties the System Name field
-  - Form heading remains 'Add System'
-  - No data is submitted to the server
-  - Table remains unchanged
-
----
-
-### 2. Add System Validation
+### 2. Add System - Happy Path
 
 **Seed:** `tests/setup/auth.setup.ts`
 
-#### 2.1. Submit form with empty System Name field
+#### 2.1. TC-ADD-01: Successfully create a new system with a unique name
 
-**File:** `tests/other-master/system-master/negative/add-system-empty-name.spec.ts`
-
-**Steps:**
-  1. Navigate to https://stage.elevatorplus.net/master/system-master
-  2. Leave the System Name field empty
-  3. Click the Submit button
-  4. Verify a validation error is shown for the System Name field
-
-**Expected Results:**
-  - Validation error appears for the System Name field
-  - Form is not submitted
-  - User remains on the same page
-
-#### 2.2. Submit duplicate System Name (active record)
-
-**File:** `tests/other-master/system-master/negative/add-system-duplicate-active.spec.ts`
+**File:** `tests/Other-master/system-master.spec.ts`
 
 **Steps:**
-  1. Navigate to https://stage.elevatorplus.net/master/system-master
-  2. Note an existing System Name from the Active records in the table (e.g., the first row's name)
-  3. Enter the same System Name in the form field
-  4. Click the Submit button
-  5. Verify an error or warning toast is shown indicating duplicate System Name
-  6. Verify no duplicate row is added to the table
+  1. Navigate to /master/system-master
+    - expect: 'Add System' form is visible with an empty System Name input
+  2. Type a unique name, e.g. 'DUPLEX Test System'
+    - expect: Text appears in the input
+  3. Click 'Submit'
+    - expect: Toast 'System created successfully!' appears
+    - expect: System Name input is cleared
+    - expect: Form heading remains 'Add System'
+    - expect: New system appears in the table with Status 'Active'
 
-**Expected Results:**
-  - Error or warning message appears for duplicate System Name
-  - Duplicate record is not added to the table
-  - System Names must be globally unique
+#### 2.2. TC-ADD-02: Create a system with special characters in the name
 
-#### 2.3. Inactivate an existing record and try to add the same System Name again
-
-**File:** `tests/other-master/system-master/negative/add-system-duplicate-inactive.spec.ts`
+**File:** `tests/Other-master/system-master.spec.ts`
 
 **Steps:**
-  1. Navigate to https://stage.elevatorplus.net/master/system-master
-  2. Note the System Name of the first Active record in the table
-  3. Click the Edit icon for that record
-  4. Change the Status dropdown from 'Active' to 'Inactive'
-  5. Click the Update button
-  6. Verify success toast is displayed
-  7. Verify the record no longer appears under the Active filter
-  8. In the Add System form, enter the same System Name that was just inactivated
-  9. Click the Submit button
-  10. Verify an error or warning is shown — the system should not allow adding a duplicate name even if the existing record is inactive
-  11. Cleanup: switch to Inactive filter, click Edit on the inactivated record, restore Status to 'Active', click Update
+  1. Navigate to /master/system-master and type a name with special characters, e.g. 'System #1 - Hi-Speed'
+    - expect: Input accepts special characters
+  2. Click 'Submit'
+    - expect: Toast 'System created successfully!' appears
+    - expect: New record appears in table with exact name
 
-**Expected Results:**
-  - Inactivating a record does not free up the System Name for reuse
-  - Attempting to add the same name again (whether active or inactive) is blocked with an error
-  - The duplicate record is not created
+#### 2.3. TC-ADD-03: Create a system with a long name
 
----
+**File:** `tests/Other-master/system-master.spec.ts`
 
-### 3. Update System
+**Steps:**
+  1. Navigate to /master/system-master and type a name of approximately 100 characters
+    - expect: Input accepts the long text
+  2. Click 'Submit'
+    - expect: Either success toast, or an appropriate error if a character limit is enforced
+
+### 3. Mandatory Field Validation
 
 **Seed:** `tests/setup/auth.setup.ts`
 
-#### 3.1. Edit system and update with a new valid System Name
+#### 3.1. TC-VAL-01: Submit with empty System Name shows inline error
 
-**File:** `tests/other-master/system-master/positive/edit-system-name.spec.ts`
-
-**Steps:**
-  1. Navigate to https://stage.elevatorplus.net/master/system-master
-  2. Wait for the data table to load
-  3. Note the current System Name of the first row
-  4. Click the Edit icon for the first row
-  5. Verify the form heading changes to 'Update System'
-  6. Verify the System Name field is pre-populated with the row's value
-  7. Change the System Name field to a new unique name (e.g., `UpdatedSystem<timestamp>`)
-  8. Click the Update button
-  9. Verify a success toast/message is displayed
-  10. Verify the updated System Name is reflected in the data table
-  11. Cleanup: click Edit on the updated row and revert to the original name
-
-**Expected Results:**
-  - Clicking Edit populates the form with existing system data
-  - Form heading changes to 'Update System'
-  - Update button saves the new System Name successfully
-  - Success message/toast is displayed
-  - Updated name appears in the table
-  - Original name is restored after cleanup
-
-#### 3.2. Edit system and change status to Inactive
-
-**File:** `tests/other-master/system-master/positive/edit-system-status-inactive.spec.ts`
+**File:** `tests/Other-master/system-master.spec.ts`
 
 **Steps:**
-  1. Navigate to https://stage.elevatorplus.net/master/system-master
-  2. Wait for the table to load
-  3. Click the Edit icon for an Active record
-  4. Verify the Status dropdown is visible and shows 'Active'
-  5. Change the Status dropdown to 'Inactive'
-  6. Click the Update button
-  7. Verify success message is displayed
-  8. Verify the record no longer appears under the Active filter
-  9. Switch the Status filter to 'Inactive' and confirm the record is visible there
-  10. Verify the record does NOT appear when the Active filter is applied
-  11. Cleanup: click Edit on the record in Inactive view, set Status back to 'Active', click Update
+  1. Navigate to /master/system-master, leave System Name empty, and click 'Submit'
+    - expect: Inline validation error appears below System Name
+    - expect: No record is added to the table
 
-**Expected Results:**
-  - Status dropdown is available in edit/update mode
-  - Status can be changed from Active to Inactive
-  - Success message is shown after update
-  - Record is visible only under the Inactive filter after update
-  - Record does not appear in Active filter
-  - Record restored to Active after cleanup
+#### 3.2. TC-VAL-02: Submit with only whitespace shows validation error
 
-#### 3.3. Click Clear in Update mode discards changes
-
-**File:** `tests/other-master/system-master/positive/edit-system-clear.spec.ts`
+**File:** `tests/Other-master/system-master.spec.ts`
 
 **Steps:**
-  1. Navigate to https://stage.elevatorplus.net/master/system-master
-  2. Click the Edit icon for any system record
-  3. Verify the form heading reads 'Update System'
-  4. Modify the System Name field to a different value
-  5. Click the Clear button
-  6. Verify the form resets to 'Add System' mode with an empty System Name field
-  7. Verify the table still shows the original unchanged System Name for that row
+  1. Navigate to /master/system-master, type only spaces in System Name, and click 'Submit'
+    - expect: Either validation error appears, or server returns error
+    - expect: No system with blank name is created
 
-**Expected Results:**
-  - Clear button discards unsaved changes
-  - Form resets to 'Add System' heading with the field cleared
-  - No changes are persisted to the data table
+#### 3.3. TC-VAL-03: Validation error clears when valid input is entered
 
-#### 3.4. Update System Name to match an existing active record's name
-
-**File:** `tests/other-master/system-master/negative/edit-system-duplicate-name.spec.ts`
+**File:** `tests/Other-master/system-master.spec.ts`
 
 **Steps:**
-  1. Navigate to https://stage.elevatorplus.net/master/system-master
-  2. Wait for the table to load; skip if fewer than 2 rows exist
-  3. Note the System Name from the second table row
-  4. Click the Edit icon on the first row
-  5. Change the System Name field to match the second row's name
-  6. Click the Update button
-  7. Verify an error/toast message is visible for duplicate System Name
-  8. Click Clear to discard changes
-  9. Verify the table still shows the original first row name
+  1. Navigate to /master/system-master and click 'Submit' without entering a name
+    - expect: Validation error is shown
+  2. Type a valid name
+    - expect: Validation error disappears
+  3. Click 'Submit'
+    - expect: Toast 'System created successfully!' appears
 
-**Expected Results:**
-  - Updating a system with a name that already exists is blocked
-  - Error or warning message is visible
-  - No changes are persisted to the table
-
-#### 3.5. Submit Update form with empty System Name field
-
-**File:** `tests/other-master/system-master/negative/edit-system-empty-name.spec.ts`
-
-**Steps:**
-  1. Navigate to https://stage.elevatorplus.net/master/system-master
-  2. Click the Edit icon for any system record
-  3. Clear the System Name field completely
-  4. Click the Update button
-  5. Verify a validation error is shown for the System Name field
-  6. Verify the form remains in 'Update System' mode
-
-**Expected Results:**
-  - Validation error appears for the empty System Name field
-  - Update does not proceed
-  - User remains in 'Update System' mode
-
----
-
-### 4. Data Table Verification
+### 4. Duplicate Prevention
 
 **Seed:** `tests/setup/auth.setup.ts`
 
-#### 4.1. Verify newly added system record appears correctly in the table
+#### 4.1. TC-DUP-01: Submitting an existing system name shows an error
 
-**File:** `tests/other-master/system-master/positive/verify-data-in-table.spec.ts`
-
-**Steps:**
-  1. Navigate to https://stage.elevatorplus.net/master/system-master
-  2. Enter a unique system name (e.g., `VerifySystem<timestamp>`)
-  3. Click the Submit button
-  4. Verify success message is displayed
-  5. In the data table, search for the newly added system name
-  6. Verify the row appears with:
-     - System Name = entered name
-     - Status = `Active`
-  7. Cleanup: edit the record and set status to Inactive
-
-**Expected Results:**
-  - The newly added row must display the System Name exactly as entered
-  - Status should default to Active
-  - Record is immediately visible in the data table after submission
-
-#### 4.2. Search system by name in the table
-
-**File:** `tests/other-master/system-master/positive/search-system.spec.ts`
+**File:** `tests/Other-master/system-master.spec.ts`
 
 **Steps:**
-  1. Navigate to https://stage.elevatorplus.net/master/system-master
-  2. Wait for the table to load
-  3. Note the System Name from the first visible row
-  4. Type that name in the search box
-  5. Verify only rows matching the search term are displayed
-  6. Clear the search box
-  7. Verify all records are restored
+  1. Navigate to /master/system-master and note an existing system name (e.g. 'SIMPLEX')
+    - expect: At least one record is visible in the table
+  2. Type 'SIMPLEX' in the System Name input and click 'Submit'
+    - expect: Toast error 'Something went wrong.' appears
+    - expect: No duplicate record is added
 
-**Expected Results:**
-  - Search filters table results in real-time or on input
-  - Only rows matching the search term are shown
-  - Clearing the search restores the full list
+#### 4.2. TC-DUP-02: Test case-sensitivity for duplicate system name
 
-#### 4.3. Search with no matching results
-
-**File:** `tests/other-master/system-master/negative/search-no-results.spec.ts`
+**File:** `tests/Other-master/system-master.spec.ts`
 
 **Steps:**
-  1. Navigate to https://stage.elevatorplus.net/master/system-master
-  2. Wait for the table to load
-  3. Type a search term that matches no system name (e.g., `XYZNOTEXIST99999`)
-  4. Verify the table shows an empty state or "No records found" message
+  1. Note an existing system name (e.g. 'SIMPLEX') and type it with different casing (e.g. 'simplex')
+    - expect: Observe whether the system treats this as a duplicate
 
-**Expected Results:**
-  - Table shows empty state or "No records found" message
-  - No data rows are displayed for an unmatched search term
-
-#### 4.4. Status filter defaults to Active
-
-**File:** `tests/other-master/system-master/positive/filter-status-active-default.spec.ts`
-
-**Steps:**
-  1. Navigate to https://stage.elevatorplus.net/master/system-master
-  2. Wait for the table to load
-  3. Verify the Status filter is set to 'Active' by default
-  4. Verify all visible rows show Active status
-
-**Expected Results:**
-  - Default Status filter is 'Active'
-  - All displayed rows have Active status
-
-#### 4.5. Filter by Inactive status
-
-**File:** `tests/other-master/system-master/positive/filter-status-inactive.spec.ts`
-
-**Steps:**
-  1. Navigate to https://stage.elevatorplus.net/master/system-master
-  2. Wait for the table to load
-  3. Change the Status filter to 'Inactive'
-  4. Verify only Inactive system records are displayed
-  5. If no inactive records exist, verify an empty state is shown
-
-**Expected Results:**
-  - Inactive filter shows only Inactive system records
-  - All displayed rows show Inactive status
-  - Empty state shown if no inactive records exist
-
-#### 4.6. Filter by All status
-
-**File:** `tests/other-master/system-master/positive/filter-status-all.spec.ts`
-
-**Steps:**
-  1. Navigate to https://stage.elevatorplus.net/master/system-master
-  2. Wait for the table to load
-  3. Change the Status filter to 'All'
-  4. Verify that both Active and Inactive records are visible in the table
-
-**Expected Results:**
-  - 'All' filter shows every record regardless of status
-  - Both Active and Inactive status badges are present among the displayed rows
-
-#### 4.7. Inactivated record appears only in Inactive/All filters, not in Active filter
-
-**File:** `tests/other-master/system-master/positive/inactive-record-filter-visibility.spec.ts`
-
-**Steps:**
-  1. Navigate to https://stage.elevatorplus.net/master/system-master
-  2. Note the System Name of the first Active record
-  3. Click the Edit icon for that record
-  4. Change the Status dropdown to 'Inactive' and click Update
-  5. Verify success toast is displayed
-  6. Verify the Active filter (default view) does NOT show the inactivated record
-  7. Switch the Status filter to 'Inactive' and verify the record IS visible
-  8. Switch the Status filter to 'All' and verify the record IS visible with Inactive status
-  9. Cleanup: edit the record in Inactive view and restore Status to 'Active'
-
-**Expected Results:**
-  - Inactivated record is absent from the Active filter
-  - Inactivated record is visible in the Inactive filter
-  - Inactivated record is visible in the All filter with Inactive badge
-  - Record is restored to Active after cleanup
-
-#### 4.8. Change page size via Show dropdown
-
-**File:** `tests/other-master/system-master/positive/show-filter-page-size.spec.ts`
-
-**Steps:**
-  1. Navigate to https://stage.elevatorplus.net/master/system-master
-  2. Wait for the table to load
-  3. Note the default page size shown in the Show dropdown
-  4. Change the Show dropdown to '10'
-  5. Verify at most 10 rows are displayed
-  6. Change the Show dropdown to '25'
-  7. Verify at most 25 rows are displayed
-  8. Change the Show dropdown to '50'
-  9. Verify at most 50 rows are displayed
-
-**Expected Results:**
-  - Changing the Show dropdown updates the number of visible rows accordingly
-  - Pagination controls update to reflect the new page size
-  - No data is lost when changing page size
-
----
-
-### 5. UI and UX
+### 5. Clear Button Behavior
 
 **Seed:** `tests/setup/auth.setup.ts`
 
-#### 5.1. Verify System Master page layout and all elements
+#### 5.1. TC-CLR-01: Clear button resets the Add System form
 
-**File:** `tests/other-master/system-master/ui/page-layout.spec.ts`
-
-**Steps:**
-  1. Navigate to https://stage.elevatorplus.net/master/system-master
-  2. Verify the page heading 'System Master' is displayed
-  3. Verify the Add System form section is present with heading 'Add System'
-  4. Verify the System Name field is visible and accessible
-  5. Verify the Submit and Clear buttons are visible and enabled
-  6. Verify the data table section is visible below the form
-  7. Verify table headers are present: Sr. No., Action, System Name, Status
-  8. Verify the Status filter dropdown, Show dropdown, and Search box are present above the table
-
-**Expected Results:**
-  - Page heading 'System Master' is visible
-  - System Name form field is visible
-  - Submit and Clear buttons are visible and clickable
-  - Table with correct column headers is displayed
-  - Filter controls (Status, Show, Search) are visible above the table
-
-#### 5.2. Verify System Name field accepts text, numbers, and alphanumeric values
-
-**File:** `tests/other-master/system-master/ui/field-type-validation.spec.ts`
+**File:** `tests/Other-master/system-master.spec.ts`
 
 **Steps:**
-  1. Navigate to https://stage.elevatorplus.net/master/system-master
-  2. Click on the System Name field and type alphabetic text (e.g., 'SystemABC')
-  3. Verify the field accepts the text input
-  4. Clear the field and type a numeric-only value (e.g., '12345')
-  5. Verify the field accepts the numeric input
-  6. Clear the field and type an alphanumeric value (e.g., 'System123')
-  7. Verify the field accepts the alphanumeric input
+  1. Navigate to /master/system-master, type a name in System Name
+    - expect: Text is visible
+  2. Click 'Clear'
+    - expect: System Name input is cleared
+    - expect: Form heading remains 'Add System'
+    - expect: No toast or error is shown
 
-**Expected Results:**
-  - System Name field accepts text, numeric, and alphanumeric input
-  - No input restrictions are applied on character type
+#### 5.2. TC-CLR-02: Clear button in Edit mode resets form to Add System state
 
-#### 5.3. Verify table pagination controls
-
-**File:** `tests/other-master/system-master/ui/pagination-controls.spec.ts`
+**File:** `tests/Other-master/system-master.spec.ts`
 
 **Steps:**
-  1. Navigate to https://stage.elevatorplus.net/master/system-master
-  2. Wait for the table to load
-  3. Verify pagination controls are visible below the table
-  4. Verify the Previous page button is disabled when on page 1
-  5. Verify the current page number is highlighted or active
-  6. If multiple pages exist, click Next page and verify the page changes
-  7. Verify the Next page button is disabled on the last page
+  1. Navigate to /master/system-master and click Edit on any record
+    - expect: Form shows 'Update System' with System Name pre-filled and Status dropdown visible
+  2. Click 'Clear'
+    - expect: Form reverts to 'Add System' mode with empty System Name
+    - expect: Status dropdown is no longer visible
+    - expect: Action button reverts to 'Submit'
 
-**Expected Results:**
-  - Pagination is present when records exist
-  - Previous button is disabled on page 1
-  - Next button is disabled on the last page
-  - Current page number is highlighted/active
+### 6. Edit and Update Operations
 
-#### 5.4. Verify Edit icon is present in Action column
+**Seed:** `tests/setup/auth.setup.ts`
 
-**File:** `tests/other-master/system-master/ui/edit-icon-present.spec.ts`
+#### 6.1. TC-EDT-01: Edit icon opens the system record in edit mode
+
+**File:** `tests/Other-master/system-master.spec.ts`
 
 **Steps:**
-  1. Navigate to https://stage.elevatorplus.net/master/system-master
-  2. Wait for the table to load with at least one record
-  3. Verify the Action column of the first row contains an Edit icon (pencil/img)
-  4. Hover over the Edit icon and verify a tooltip (e.g., 'Edit') appears if applicable
-  5. Click the Edit icon and verify the form switches to 'Update System' mode with the System Name pre-filled
+  1. Navigate to /master/system-master and click the Edit icon on any row
+    - expect: Form heading changes to 'Update System'
+    - expect: System Name is pre-filled
+    - expect: Status dropdown (Active / Inactive) appears with current status selected
+    - expect: Action button changes to 'Update'
 
-**Expected Results:**
-  - Edit icon is visible in the Action column for each row
-  - Clicking the icon loads the row's data into the form in Update mode
-  - Form heading changes to 'Update System'
+#### 6.2. TC-EDT-02: Successfully update the system name
 
-#### 5.5. Verify Status badge is visible in each table row
-
-**File:** `tests/other-master/system-master/ui/status-badge-visible.spec.ts`
+**File:** `tests/Other-master/system-master.spec.ts`
 
 **Steps:**
-  1. Navigate to https://stage.elevatorplus.net/master/system-master
-  2. Wait for the table to load with at least one record
-  3. Verify the Status column is present in the table
-  4. Verify the first row displays a Status badge (e.g., 'Active' shown as a badge/h5 element)
-  5. Switch filter to 'Inactive' (if records exist) and verify Inactive badge is displayed
+  1. Navigate to /master/system-master, click Edit, clear System Name, and type 'Updated System Name Test'
+    - expect: New name is in the input
+  2. Click 'Update'
+    - expect: Toast 'System updated successfully!' appears
+    - expect: Form resets to 'Add System'; table shows updated name
 
-**Expected Results:**
-  - Status column is visible in the data table
-  - Each row has a visible Active or Inactive status badge
-  - Badge reflects the actual status of the record
+#### 6.3. TC-EDT-03: Update system status to Inactive
+
+**File:** `tests/Other-master/system-master.spec.ts`
+
+**Steps:**
+  1. Click Edit on any Active system, set Status to 'Inactive', and click 'Update'
+    - expect: Success toast appears
+    - expect: When Status filter set to 'All', the record shows 'Inactive' badge
+
+#### 6.4. TC-EDT-04: Update with empty System Name shows validation error
+
+**File:** `tests/Other-master/system-master.spec.ts`
+
+**Steps:**
+  1. Click Edit on any system, clear System Name, and click 'Update'
+    - expect: Inline validation error appears
+    - expect: No update is saved; form remains in Update mode
+
+#### 6.5. TC-EDT-05: Update system name to a duplicate of an existing Active system shows error
+
+**File:** `tests/Other-master/system-master.spec.ts`
+
+**Steps:**
+  1. Navigate to /master/system-master (Status filter: Active) and note an existing Active system name (e.g. 'SIMPLEX')
+    - expect: The record is visible with an Active status badge
+  2. Click Edit on a different system, change its name to 'SIMPLEX', and click 'Update'
+    - expect: Toast error 'Something went wrong.' appears
+    - expect: Original name is preserved in the table
+
+#### 6.6. TC-EDT-06: Update system name to a duplicate of an existing Inactive system shows error
+
+**File:** `tests/Other-master/system-master.spec.ts`
+
+**Steps:**
+  1. Navigate to /master/system-master, set Status filter to 'Inactive', and note an existing Inactive system name
+    - expect: An Inactive record is visible
+  2. Set Status filter back to 'Active', click Edit on an Active system, change its name to the noted Inactive system's name, and click 'Update'
+    - expect: Toast error 'Something went wrong.' appears
+    - expect: Update is blocked regardless of the conflicting record's inactive status
+
+### 7. Status Filter
+
+**Seed:** `tests/setup/auth.setup.ts`
+
+#### 7.1. TC-FLT-01: Filter table by Active status (default)
+
+**File:** `tests/Other-master/system-master.spec.ts`
+
+**Steps:**
+  1. Navigate to /master/system-master
+    - expect: Status filter defaults to 'Active'; table shows only Active records
+
+#### 7.2. TC-FLT-02: Filter table to show All statuses
+
+**File:** `tests/Other-master/system-master.spec.ts`
+
+**Steps:**
+  1. Change Status filter to 'All'
+    - expect: Both Active and Inactive records are displayed
+
+#### 7.3. TC-FLT-03: Filter table by Inactive status
+
+**File:** `tests/Other-master/system-master.spec.ts`
+
+**Steps:**
+  1. Change Status filter to 'Inactive'
+    - expect: Only Inactive records shown, or empty state if none exist
+
+### 8. Search Functionality
+
+**Seed:** `tests/setup/auth.setup.ts`
+
+#### 8.1. TC-SRC-01: Search by partial system name returns matching results
+
+**File:** `tests/Other-master/system-master.spec.ts`
+
+**Steps:**
+  1. Navigate to /master/system-master and type 'DUPLEX' in the search input
+    - expect: Table filters to show only matching records
+
+#### 8.2. TC-SRC-02: Search with a non-existent name returns no results
+
+**File:** `tests/Other-master/system-master.spec.ts`
+
+**Steps:**
+  1. Type 'XYZNONEXISTENTSYSTEM999' in the search input
+    - expect: Table shows no rows or an empty state message
+
+#### 8.3. TC-SRC-03: Clearing the search input restores the full list
+
+**File:** `tests/Other-master/system-master.spec.ts`
+
+**Steps:**
+  1. Type a search term, then clear the search input
+    - expect: The full Active list is restored
+
+### 9. Rows Per Page and Pagination
+
+**Seed:** `tests/setup/auth.setup.ts`
+
+#### 9.1. TC-PAG-01: Change rows-per-page to 10
+
+**File:** `tests/Other-master/system-master.spec.ts`
+
+**Steps:**
+  1. Navigate to /master/system-master and change Show to '10'
+    - expect: Up to 10 rows are displayed
+
+#### 9.2. TC-PAG-02: Navigate between pages
+
+**File:** `tests/Other-master/system-master.spec.ts`
+
+**Steps:**
+  1. If multiple pages exist, click 'Next page' then 'Previous page'
+    - expect: Navigation between pages works correctly
+
+### 10. Column Sorting
+
+**Seed:** `tests/setup/auth.setup.ts`
+
+#### 10.1. TC-SRT-01: Sort table by System Name column
+
+**File:** `tests/Other-master/system-master.spec.ts`
+
+**Steps:**
+  1. Navigate to /master/system-master and click 'System Name' column header
+    - expect: Table re-sorts alphabetically A→Z
+  2. Click 'System Name' header again
+    - expect: Sort reverses to Z→A
+
+#### 10.2. TC-SRT-02: Sort table by Status column
+
+**File:** `tests/Other-master/system-master.spec.ts`
+
+**Steps:**
+  1. Set Status filter to 'All', then click 'Status' column header
+    - expect: Records are grouped by status
+
+### 11. Inactive Status Management
+
+**Seed:** `tests/setup/auth.setup.ts`
+
+#### 11.1. TC-INA-01: Mark an Active system as Inactive and verify filter behavior
+
+**File:** `tests/Other-master/system-master.spec.ts`
+
+**Steps:**
+  1. Edit an Active system, set Status to 'Inactive', click 'Update'
+    - expect: Success toast appears
+  2. With Status filter 'Active', verify the system is gone
+    - expect: System absent from Active list
+  3. Switch to 'Inactive' filter
+    - expect: System appears with 'Inactive' badge
+
+#### 11.2. TC-INA-02: Re-activate an Inactive system
+
+**File:** `tests/Other-master/system-master.spec.ts`
+
+**Steps:**
+  1. Edit an Inactive system, set Status to 'Active', click 'Update'
+    - expect: System reappears in Active list
+
+### 12. Navigation and Access
+
+**Seed:** `tests/setup/auth.setup.ts`
+
+#### 12.1. TC-NAV-01: Access System Master via direct URL without authentication redirects to login
+
+**File:** `tests/Other-master/system-master.spec.ts`
+
+**Steps:**
+  1. Open unauthenticated browser and navigate to https://stage.elevatorplus.net/master/system-master
+    - expect: User is redirected to login page
+
+#### 12.2. TC-NAV-02: Access System Master via Other Masters tab navigation
+
+**File:** `tests/Other-master/system-master.spec.ts`
+
+**Steps:**
+  1. Log in, click 'Other Masters' in sidebar, then click the 'System Master' tab
+    - expect: System Master form with 'Add System' heading is displayed
+    - expect: Data table loads with system records

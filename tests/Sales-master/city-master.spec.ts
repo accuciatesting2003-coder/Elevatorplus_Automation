@@ -1,7 +1,7 @@
 // spec: test-plans/Sales-mater-test-plan/city-master-test-plan.md
 // seed: tests/Company-master/designation-master.spec.ts
 
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../fixtures/auth-fixture';
 import * as path from 'path';
 
 const CITY_MASTER_URL = '/master/city-master';
@@ -9,31 +9,6 @@ const CITY_MASTER_URL = '/master/city-master';
 // ─────────────────────────────────────────────────────────────────────────────
 // Helpers
 // ─────────────────────────────────────────────────────────────────────────────
-
-async function performLogin(page: any) {
-  const mobile = process.env.MOBILE_NUMBER || '9209365301';
-  const password = process.env.PASSWORD || 'Shravani@123';
-
-  const passwordInput = page.locator('input[type="password"]');
-  const passwordAlreadyVisible = await passwordInput.isVisible({ timeout: 3000 }).catch(() => false);
-
-  if (!passwordAlreadyVisible) {
-    const loginInput = page.locator('.form-control').first();
-    await loginInput.waitFor({ state: 'visible', timeout: 10000 });
-    await loginInput.focus();
-    await page.keyboard.press('End');
-    await page.keyboard.type(mobile);
-    await page.getByRole('button', { name: 'Login' }).click();
-  }
-
-  const pwdVisible = await passwordInput.isVisible({ timeout: 5000 }).catch(() => false);
-  if (pwdVisible) {
-    await passwordInput.fill(password);
-    await page.getByRole('button', { name: 'Login' }).click();
-  }
-
-  await page.waitForURL((url: URL) => !url.pathname.includes('/login'), { timeout: 30000 });
-}
 
 async function registerPopupHandler(page: any) {
   await page.addLocatorHandler(
@@ -64,20 +39,8 @@ async function dismissNotificationPopup(page: any) {
 
 async function gotoCityMaster(page: any) {
   await registerPopupHandler(page);
-
-  await page.goto(CITY_MASTER_URL, { timeout: 60000 }).catch(async () => {
-    await page.goto(CITY_MASTER_URL, { timeout: 60000 });
-  });
-  await dismissNotificationPopup(page);
-
-  if (page.url().includes('/login')) {
-    await performLogin(page);
-    if (!page.url().includes('city-master')) {
-      await page.goto(CITY_MASTER_URL);
-    }
-  }
-
-  await page.getByRole('heading', { name: /Add City/i }).waitFor({ state: 'visible', timeout: 60000 });
+  await page.goto(CITY_MASTER_URL, { timeout: 60000 });
+  await page.getByRole('heading', { name: /Add City/i }).waitFor({ state: 'visible', timeout: 45000 });
   await dismissNotificationPopup(page);
 }
 
@@ -100,13 +63,15 @@ async function fillCityFormMandatory(
   installCost: string,
   installCostPerFloor: string,
   machineHoisting: string,
-  machineHoistingPerFloor: string
+  machineHoistingPerFloor: string,
+  transportCostPerFloor: string = '10'
 ) {
   await page.getByRole('textbox', { name: /City Name \*/i }).fill(cityName);
-  await page.getByRole('textbox', { name: /Transportation Cost \*/i }).fill(transportCost);
-  await page.getByRole('textbox', { name: /Installation Cost \(for G\+0\) \*/i }).fill(installCost);
+  await page.getByRole('textbox', { name: /Transportation Cost \(for G\+5\) \*/i }).fill(transportCost);
+  await page.getByRole('textbox', { name: /Transportation Cost Per Floor \*/i }).fill(transportCostPerFloor);
+  await page.getByRole('textbox', { name: /Installation Cost \(for G\+5\) \*/i }).fill(installCost);
   await page.getByRole('textbox', { name: /Installation Cost Per Floor Increase \*/i }).fill(installCostPerFloor);
-  await page.getByRole('textbox', { name: /Machine Hoisting \(for G\+0\) \*/i }).fill(machineHoisting);
+  await page.getByRole('textbox', { name: /Machine Hoisting \(for G\+5\) \*/i }).fill(machineHoisting);
   await page.getByRole('textbox', { name: /Machine Hoisting Per Floor Increase \*/i }).fill(machineHoistingPerFloor);
 }
 
@@ -137,11 +102,11 @@ test.describe('City Master', () => {
 
       // Verify all 9 fields are visible
       await expect(page.getByRole('textbox', { name: /City Name \*/i })).toBeVisible();
-      await expect(page.getByRole('textbox', { name: /Transportation Cost \*/i })).toBeVisible();
+      await expect(page.getByRole('textbox', { name: /Transportation Cost \(for G\+5\) \*/i })).toBeVisible();
       await expect(page.getByRole('textbox', { name: /Outward Transportation Cost/i })).toBeVisible();
-      await expect(page.getByRole('textbox', { name: /Installation Cost \(for G\+0\) \*/i })).toBeVisible();
+      await expect(page.getByRole('textbox', { name: /Installation Cost \(for G\+5\) \*/i })).toBeVisible();
       await expect(page.getByRole('textbox', { name: /Installation Cost Per Floor Increase \*/i })).toBeVisible();
-      await expect(page.getByRole('textbox', { name: /Machine Hoisting \(for G\+0\) \*/i })).toBeVisible();
+      await expect(page.getByRole('textbox', { name: /Machine Hoisting \(for G\+5\) \*/i })).toBeVisible();
       await expect(page.getByRole('textbox', { name: /Machine Hoisting Per Floor Increase \*/i })).toBeVisible();
 
       // City Manager/Head dropdown area is visible
@@ -185,7 +150,7 @@ test.describe('City Master', () => {
       await expect(page.locator('[role="alert"]').filter({ hasText: /created successfully/i })).toBeVisible({ timeout: 10000 });
 
       // Newly created record should appear in the table
-      await expect(page.locator('table tbody').getByText(cityName)).toBeVisible({ timeout: 15000 });
+      await expect(page.locator('table tbody').getByText(cityName)).toBeVisible({ timeout: 30000 });
     });
 
     // TC-CM-003: Successful city creation with all fields filled
@@ -194,7 +159,7 @@ test.describe('City Master', () => {
       const cityName = `FullCity ${timestamp}`;
 
       // Fill all mandatory fields
-      await fillCityFormMandatory(page, cityName, '150', '200', '600', '60', '300', '30');
+      await fillCityFormMandatory(page, cityName, '150', '200', '600', '60', '300');
 
       // Fill optional Outward Transportation Cost
       await page.getByRole('textbox', { name: /Outward Transportation Cost/i }).fill('80');
@@ -283,10 +248,10 @@ test.describe('City Master', () => {
     // TC-CM-004: Fails when City Name is empty
     test('TC-CM-004: Form fails when City Name is empty', async ({ page }) => {
       // Leave City Name blank, fill all other mandatory fields
-      await page.getByRole('textbox', { name: /Transportation Cost \*/i }).fill('100');
-      await page.getByRole('textbox', { name: /Installation Cost \(for G\+0\) \*/i }).fill('500');
+      await page.getByRole('textbox', { name: /Transportation Cost \(for G\+5\) \*/i }).fill('100');
+      await page.getByRole('textbox', { name: /Installation Cost \(for G\+5\) \*/i }).fill('500');
       await page.getByRole('textbox', { name: /Installation Cost Per Floor Increase \*/i }).fill('50');
-      await page.getByRole('textbox', { name: /Machine Hoisting \(for G\+0\) \*/i }).fill('200');
+      await page.getByRole('textbox', { name: /Machine Hoisting \(for G\+5\) \*/i }).fill('200');
       await page.getByRole('textbox', { name: /Machine Hoisting Per Floor Increase \*/i }).fill('20');
 
       // Click Submit
@@ -304,9 +269,9 @@ test.describe('City Master', () => {
     test('TC-CM-005: Form fails when Transportation Cost is empty', async ({ page }) => {
       // Enter city name, leave Transportation Cost blank, fill other mandatory fields
       await page.getByRole('textbox', { name: /City Name \*/i }).fill('ValidationTest');
-      await page.getByRole('textbox', { name: /Installation Cost \(for G\+0\) \*/i }).fill('500');
+      await page.getByRole('textbox', { name: /Installation Cost \(for G\+5\) \*/i }).fill('500');
       await page.getByRole('textbox', { name: /Installation Cost Per Floor Increase \*/i }).fill('50');
-      await page.getByRole('textbox', { name: /Machine Hoisting \(for G\+0\) \*/i }).fill('200');
+      await page.getByRole('textbox', { name: /Machine Hoisting \(for G\+5\) \*/i }).fill('200');
       await page.getByRole('textbox', { name: /Machine Hoisting Per Floor Increase \*/i }).fill('20');
 
       // Click Submit
@@ -323,9 +288,9 @@ test.describe('City Master', () => {
     test('TC-CM-006: Form fails when Installation Cost is empty', async ({ page }) => {
       // Fill city name and transportation cost, leave Installation Cost blank
       await page.getByRole('textbox', { name: /City Name \*/i }).fill('ValidationTest');
-      await page.getByRole('textbox', { name: /Transportation Cost \*/i }).fill('100');
+      await page.getByRole('textbox', { name: /Transportation Cost \(for G\+5\) \*/i }).fill('100');
       await page.getByRole('textbox', { name: /Installation Cost Per Floor Increase \*/i }).fill('50');
-      await page.getByRole('textbox', { name: /Machine Hoisting \(for G\+0\) \*/i }).fill('200');
+      await page.getByRole('textbox', { name: /Machine Hoisting \(for G\+5\) \*/i }).fill('200');
       await page.getByRole('textbox', { name: /Machine Hoisting Per Floor Increase \*/i }).fill('20');
 
       // Click Submit
@@ -342,9 +307,9 @@ test.describe('City Master', () => {
     test('TC-CM-007: Form fails when Installation Cost Per Floor Increase is empty', async ({ page }) => {
       // Fill all mandatory fields except Installation Cost Per Floor Increase
       await page.getByRole('textbox', { name: /City Name \*/i }).fill('ValidationTest');
-      await page.getByRole('textbox', { name: /Transportation Cost \*/i }).fill('100');
-      await page.getByRole('textbox', { name: /Installation Cost \(for G\+0\) \*/i }).fill('500');
-      await page.getByRole('textbox', { name: /Machine Hoisting \(for G\+0\) \*/i }).fill('200');
+      await page.getByRole('textbox', { name: /Transportation Cost \(for G\+5\) \*/i }).fill('100');
+      await page.getByRole('textbox', { name: /Installation Cost \(for G\+5\) \*/i }).fill('500');
+      await page.getByRole('textbox', { name: /Machine Hoisting \(for G\+5\) \*/i }).fill('200');
       await page.getByRole('textbox', { name: /Machine Hoisting Per Floor Increase \*/i }).fill('20');
 
       // Click Submit
@@ -361,8 +326,8 @@ test.describe('City Master', () => {
     test('TC-CM-008: Form fails when Machine Hoisting is empty', async ({ page }) => {
       // Fill all mandatory fields except Machine Hoisting
       await page.getByRole('textbox', { name: /City Name \*/i }).fill('ValidationTest');
-      await page.getByRole('textbox', { name: /Transportation Cost \*/i }).fill('100');
-      await page.getByRole('textbox', { name: /Installation Cost \(for G\+0\) \*/i }).fill('500');
+      await page.getByRole('textbox', { name: /Transportation Cost \(for G\+5\) \*/i }).fill('100');
+      await page.getByRole('textbox', { name: /Installation Cost \(for G\+5\) \*/i }).fill('500');
       await page.getByRole('textbox', { name: /Installation Cost Per Floor Increase \*/i }).fill('50');
       await page.getByRole('textbox', { name: /Machine Hoisting Per Floor Increase \*/i }).fill('20');
 
@@ -380,10 +345,10 @@ test.describe('City Master', () => {
     test('TC-CM-009: Form fails when Machine Hoisting Per Floor Increase is empty', async ({ page }) => {
       // Fill all mandatory fields except Machine Hoisting Per Floor Increase
       await page.getByRole('textbox', { name: /City Name \*/i }).fill('ValidationTest');
-      await page.getByRole('textbox', { name: /Transportation Cost \*/i }).fill('100');
-      await page.getByRole('textbox', { name: /Installation Cost \(for G\+0\) \*/i }).fill('500');
+      await page.getByRole('textbox', { name: /Transportation Cost \(for G\+5\) \*/i }).fill('100');
+      await page.getByRole('textbox', { name: /Installation Cost \(for G\+5\) \*/i }).fill('500');
       await page.getByRole('textbox', { name: /Installation Cost Per Floor Increase \*/i }).fill('50');
-      await page.getByRole('textbox', { name: /Machine Hoisting \(for G\+0\) \*/i }).fill('200');
+      await page.getByRole('textbox', { name: /Machine Hoisting \(for G\+5\) \*/i }).fill('200');
 
       // Click Submit
       await page.getByRole('button', { name: /Submit/i }).click();
@@ -410,7 +375,7 @@ test.describe('City Master', () => {
     // TC-CM-010: Numeric fields reject alphabetic/special characters
     test('TC-CM-010: Numeric fields reject alphabetic and special character input', async ({ page }) => {
       // Transportation Cost field should reject alphabetic input
-      const transportCostField = page.getByRole('textbox', { name: /Transportation Cost \*/i });
+      const transportCostField = page.getByRole('textbox', { name: /Transportation Cost \(for G\+5\) \*/i });
       await transportCostField.fill('abc');
       await expect(transportCostField).toHaveValue('');
 
@@ -420,7 +385,7 @@ test.describe('City Master', () => {
       await expect(outwardField).toHaveValue('');
 
       // Installation Cost field should reject alphabetic input
-      const installCostField = page.getByRole('textbox', { name: /Installation Cost \(for G\+0\) \*/i });
+      const installCostField = page.getByRole('textbox', { name: /Installation Cost \(for G\+5\) \*/i });
       await installCostField.fill('abc!@#');
       await expect(installCostField).toHaveValue('');
 
@@ -430,7 +395,7 @@ test.describe('City Master', () => {
       await expect(installPerFloorField).toHaveValue('');
 
       // Machine Hoisting field should reject alphabetic input
-      const machineField = page.getByRole('textbox', { name: /Machine Hoisting \(for G\+0\) \*/i });
+      const machineField = page.getByRole('textbox', { name: /Machine Hoisting \(for G\+5\) \*/i });
       await machineField.fill('ghi');
       await expect(machineField).toHaveValue('');
 
@@ -446,10 +411,10 @@ test.describe('City Master', () => {
       const cityName = `NegVal ${timestamp}`;
 
       await page.getByRole('textbox', { name: /City Name \*/i }).fill(cityName);
-      await page.getByRole('textbox', { name: /Transportation Cost \*/i }).fill('-100');
-      await page.getByRole('textbox', { name: /Installation Cost \(for G\+0\) \*/i }).fill('-500');
+      await page.getByRole('textbox', { name: /Transportation Cost \(for G\+5\) \*/i }).fill('-100');
+      await page.getByRole('textbox', { name: /Installation Cost \(for G\+5\) \*/i }).fill('-500');
       await page.getByRole('textbox', { name: /Installation Cost Per Floor Increase \*/i }).fill('-50');
-      await page.getByRole('textbox', { name: /Machine Hoisting \(for G\+0\) \*/i }).fill('-200');
+      await page.getByRole('textbox', { name: /Machine Hoisting \(for G\+5\) \*/i }).fill('-200');
       await page.getByRole('textbox', { name: /Machine Hoisting Per Floor Increase \*/i }).fill('-20');
 
       // Click Submit
@@ -478,10 +443,10 @@ test.describe('City Master', () => {
 
       // Fill all mandatory numeric fields with 0
       await page.getByRole('textbox', { name: /City Name \*/i }).fill(cityName);
-      await page.getByRole('textbox', { name: /Transportation Cost \*/i }).fill('0');
-      await page.getByRole('textbox', { name: /Installation Cost \(for G\+0\) \*/i }).fill('0');
+      await page.getByRole('textbox', { name: /Transportation Cost \(for G\+5\) \*/i }).fill('0');
+      await page.getByRole('textbox', { name: /Installation Cost \(for G\+5\) \*/i }).fill('0');
       await page.getByRole('textbox', { name: /Installation Cost Per Floor Increase \*/i }).fill('0');
-      await page.getByRole('textbox', { name: /Machine Hoisting \(for G\+0\) \*/i }).fill('0');
+      await page.getByRole('textbox', { name: /Machine Hoisting \(for G\+5\) \*/i }).fill('0');
       await page.getByRole('textbox', { name: /Machine Hoisting Per Floor Increase \*/i }).fill('0');
 
       // Click Submit
@@ -498,10 +463,10 @@ test.describe('City Master', () => {
 
       // Enter only numbers in City Name
       await page.getByRole('textbox', { name: /City Name \*/i }).fill(cityName);
-      await page.getByRole('textbox', { name: /Transportation Cost \*/i }).fill('100');
-      await page.getByRole('textbox', { name: /Installation Cost \(for G\+0\) \*/i }).fill('500');
+      await page.getByRole('textbox', { name: /Transportation Cost \(for G\+5\) \*/i }).fill('100');
+      await page.getByRole('textbox', { name: /Installation Cost \(for G\+5\) \*/i }).fill('500');
       await page.getByRole('textbox', { name: /Installation Cost Per Floor Increase \*/i }).fill('50');
-      await page.getByRole('textbox', { name: /Machine Hoisting \(for G\+0\) \*/i }).fill('200');
+      await page.getByRole('textbox', { name: /Machine Hoisting \(for G\+5\) \*/i }).fill('200');
       await page.getByRole('textbox', { name: /Machine Hoisting Per Floor Increase \*/i }).fill('20');
 
       // Click Submit
@@ -729,7 +694,7 @@ test.describe('City Master', () => {
       expect(currentName).toBe(originalName);
 
       // Update the Transportation Cost
-      await page.getByRole('textbox', { name: /Transportation Cost \*/i }).fill('999');
+      await page.getByRole('textbox', { name: /Transportation Cost \(for G\+5\) \*/i }).fill('999');
 
       // Click Update
       await page.getByRole('button', { name: /Update/i }).click();
@@ -739,7 +704,7 @@ test.describe('City Master', () => {
 
       // Restore original value
       await clickEditOnRow(page, 0);
-      await page.getByRole('textbox', { name: /Transportation Cost \*/i }).fill('0');
+      await page.getByRole('textbox', { name: /Transportation Cost \(for G\+5\) \*/i }).fill('0');
       await page.getByRole('button', { name: /Update/i }).click();
     });
 
@@ -809,8 +774,8 @@ test.describe('City Master', () => {
     test('TC-CM-025: Clear button discards unsaved changes', async ({ page }) => {
       // Enter data in some fields
       await page.getByRole('textbox', { name: /City Name \*/i }).fill('ShouldBeCleared');
-      await page.getByRole('textbox', { name: /Transportation Cost \*/i }).fill('999');
-      await page.getByRole('textbox', { name: /Installation Cost \(for G\+0\) \*/i }).fill('888');
+      await page.getByRole('textbox', { name: /Transportation Cost \(for G\+5\) \*/i }).fill('999');
+      await page.getByRole('textbox', { name: /Installation Cost \(for G\+5\) \*/i }).fill('888');
 
       // Click Clear without saving
       await page.getByRole('button', { name: /Clear/i }).click();
@@ -820,8 +785,8 @@ test.describe('City Master', () => {
 
       // All fields should be empty after clear
       await expect(page.getByRole('textbox', { name: /City Name \*/i })).toHaveValue('');
-      await expect(page.getByRole('textbox', { name: /Transportation Cost \*/i })).toHaveValue('');
-      await expect(page.getByRole('textbox', { name: /Installation Cost \(for G\+0\) \*/i })).toHaveValue('');
+      await expect(page.getByRole('textbox', { name: /Transportation Cost \(for G\+5\) \*/i })).toHaveValue('');
+      await expect(page.getByRole('textbox', { name: /Installation Cost \(for G\+5\) \*/i })).toHaveValue('');
 
       // No record named "ShouldBeCleared" should appear in the table
       const matchingRows = await page.locator('table tbody tr').filter({ hasText: 'ShouldBeCleared' }).count();

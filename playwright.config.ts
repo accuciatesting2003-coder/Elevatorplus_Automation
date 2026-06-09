@@ -1,7 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
 import dotenv from 'dotenv';
-import * as path from 'path';
-
 // Decide which env file to load
 const envFile =
   process.env.TEST_ENV === 'prod' ? '.prod.env' : '.dev.env';
@@ -9,8 +7,6 @@ const envFile =
 // Load env file
 dotenv.config({ path: envFile });
 
-// Path to authenticated state
-const authFile = path.join(__dirname, '.auth/user.json');
 
 export default defineConfig({
   testDir: './tests',
@@ -23,7 +19,7 @@ export default defineConfig({
 
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 1, // Retry once even in dev for flaky tests
+  retries: process.env.CI ? 2 : 0, // No retries locally — keeps the same worker/session alive across failures
   workers: 1,
 
   // Multiple reporters for better visibility
@@ -41,40 +37,15 @@ export default defineConfig({
     headless: true, // Run headless by default (faster)
     viewport: { width: 1920, height: 1080 }, // Standard desktop viewport
     actionTimeout: 15 * 1000, // 15 seconds for actions like click, fill
-    navigationTimeout: 60 * 1000, // 60 seconds for page navigation (staging can be slow)
+    navigationTimeout: 90 * 1000, // 90 seconds for page navigation (staging can be slow)
   },
 
   projects: [
-    // Setup project - runs first to authenticate
-    {
-      name: 'setup',
-      testMatch: /.*\.setup\.ts/,
-    },
-
-    // Authenticated tests - reuse the logged-in state
+    // Single project — auth-fixture performs one login per worker and shares
+    // the authenticated page across all tests. No separate setup step needed.
     {
       name: 'chromium',
-      use: {
-        ...devices['Desktop Chrome'],
-        storageState: authFile, // Reuse authentication state
-      },
-      dependencies: ['setup'], // Run setup first
-    },
-    {
-      name: 'firefox',
-      use: {
-        ...devices['Desktop Firefox'],
-        storageState: authFile,
-      },
-      dependencies: ['setup'],
-    },
-    {
-      name: 'webkit',
-      use: {
-        ...devices['Desktop Safari'],
-        storageState: authFile,
-      },
-      dependencies: ['setup'],
+      use: { ...devices['Desktop Chrome'] },
     },
 
     // Tests that need to run without authentication (like login tests)

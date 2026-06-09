@@ -1,0 +1,541 @@
+[
+  {
+    "tag": "INPUT",
+    "id": "filled-search",
+    "name": "",
+    "type": "search",
+    "placeholder": "Search...",
+    "value": "",
+    "className": "MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputTypeSearch MuiInputBase-inputAdornedStart css-1gjmt73"
+  },
+  {
+    "tag": "SELECT",
+    "id": "prefixYearType",
+    "name": "prefixYearType",
+    "type": "select-one",
+    "value": "Automatic",
+    "className": "modern-form-input form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "",
+    "type": "text",
+    "placeholder": " ",
+    "value": "24-06",
+    "className": "modern-form-input"
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "quotation_template",
+    "type": "text",
+    "placeholder": "Enter template for Quotation",
+    "value": "{financialYear}{serialNumber}",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "skipResetQuotation",
+    "name": "skipResetQuotation",
+    "type": "checkbox",
+    "placeholder": "",
+    "value": "on",
+    "className": ""
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "job_template",
+    "type": "text",
+    "placeholder": "Enter template for Job",
+    "value": "{financialYear}{serialNumber}",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "skipResetJob",
+    "name": "skipResetJob",
+    "type": "checkbox",
+    "placeholder": "",
+    "value": "on",
+    "className": ""
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "pm_template",
+    "type": "text",
+    "placeholder": "Enter template for PM",
+    "value": "{serialNumber}",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "skipResetPm",
+    "name": "skipResetPm",
+    "type": "checkbox",
+    "placeholder": "",
+    "value": "on",
+    "className": ""
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "pm_quotation_template",
+    "type": "text",
+    "placeholder": "Enter template for PM Quotation",
+    "value": "{serialNumber}",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "skipResetPmQuotation",
+    "name": "skipResetPmQuotation",
+    "type": "checkbox",
+    "placeholder": "",
+    "value": "on",
+    "className": ""
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "complaint_template",
+    "type": "text",
+    "placeholder": "Enter template for Complaint",
+    "value": "{financialYear}{serialNumber}",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "skipResetComplaint",
+    "name": "skipResetComplaint",
+    "type": "checkbox",
+    "placeholder": "",
+    "value": "on",
+    "className": ""
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "repair_order_template",
+    "type": "text",
+    "placeholder": "Enter template for Repair Order",
+    "value": "{financialYear}{serialNumber}",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "skipResetRepairOrder",
+    "name": "skipResetRepairOrder",
+    "type": "checkbox",
+    "placeholder": "",
+    "value": "on",
+    "className": ""
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "dc_template",
+    "type": "text",
+    "placeholder": "Enter template for DC",
+    "value": "{financialYear}{serialNumber}",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "skipResetDc",
+    "name": "skipResetDc",
+    "type": "checkbox",
+    "placeholder": "",
+    "value": "on",
+    "className": ""
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "po_template",
+    "type": "text",
+    "placeholder": "Enter template for PO",
+    "value": "{financialYear}{serialNumber}",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "skipResetPo",
+    "name": "skipResetPo",
+    "type": "checkbox",
+    "placeholder": "",
+    "value": "on",
+    "className": ""
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "return_order_template",
+    "type": "text",
+    "placeholder": "Enter template for Return Order",
+    "value": "{financialYear}{serialNumber}",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "skipResetReturnOrder",
+    "name": "skipResetReturnOrder",
+    "type": "checkbox",
+    "placeholder": "",
+    "value": "on",
+    "className": ""
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "contract_template",
+    "type": "text",
+    "placeholder": "Enter template for PM Contract",
+    "value": "{financialYear}{serialNumber}",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "skipResetContract",
+    "name": "skipResetContract",
+    "type": "checkbox",
+    "placeholder": "",
+    "value": "on",
+    "className": ""
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "quotation_contract_template",
+    "type": "text",
+    "placeholder": "Enter template for Quotation Contract",
+    "value": "{financialYear}{serialNumber}",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "skipResetQuotationContract",
+    "name": "skipResetQuotationContract",
+    "type": "checkbox",
+    "placeholder": "",
+    "value": "on",
+    "className": ""
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "modernization_job_template",
+    "type": "text",
+    "placeholder": "Enter template for Modernization Job",
+    "value": "",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "skipResetModernizationJob",
+    "name": "skipResetModernizationJob",
+    "type": "checkbox",
+    "placeholder": "",
+    "value": "on",
+    "className": ""
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "modernization_quotation_template",
+    "type": "text",
+    "placeholder": "Enter template for Modernization Quotation",
+    "value": "",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "skipResetModernizationQuotation",
+    "name": "skipResetModernizationQuotation",
+    "type": "checkbox",
+    "placeholder": "",
+    "value": "on",
+    "className": ""
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "requisition_template",
+    "type": "text",
+    "placeholder": "Enter template for Requisition",
+    "value": "{financialYear}{serialNumber}",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "skipResetRequisition",
+    "name": "skipResetRequisition",
+    "type": "checkbox",
+    "placeholder": "",
+    "value": "on",
+    "className": ""
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "work_order_template",
+    "type": "text",
+    "placeholder": "Enter template for Work Order",
+    "value": "{financialYear}{serialNumber}",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "skipResetWorkOrder",
+    "name": "skipResetWorkOrder",
+    "type": "checkbox",
+    "placeholder": "",
+    "value": "on",
+    "className": ""
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "one_time_service_quotation_template",
+    "type": "text",
+    "placeholder": "Enter template for One-time Service Quotation",
+    "value": "{financialYear}{serialNumber}",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "skipResetOneTimeServiceQuotation",
+    "name": "skipResetOneTimeServiceQuotation",
+    "type": "checkbox",
+    "placeholder": "",
+    "value": "on",
+    "className": ""
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "one_time_service_template",
+    "type": "text",
+    "placeholder": "Enter template for One-time Service",
+    "value": "{financialYear}{serialNumber}",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "skipResetOneTimeService",
+    "name": "skipResetOneTimeService",
+    "type": "checkbox",
+    "placeholder": "",
+    "value": "on",
+    "className": ""
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "sales_order_quotation_template",
+    "type": "text",
+    "placeholder": "Enter template for Sales Order Quotation",
+    "value": "",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "sales_order_quotation_number",
+    "type": "text",
+    "placeholder": "Enter start number",
+    "value": "0",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "skipResetSalesOrderQuotation",
+    "name": "skipResetSalesOrderQuotation",
+    "type": "checkbox",
+    "placeholder": "",
+    "value": "on",
+    "className": ""
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "sales_order_pm_template",
+    "type": "text",
+    "placeholder": "Enter template for Sales Order PM",
+    "value": "",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "sales_order_pm_number",
+    "type": "text",
+    "placeholder": "Enter start number",
+    "value": "0",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "skipResetSalesOrderPm",
+    "name": "skipResetSalesOrderPm",
+    "type": "checkbox",
+    "placeholder": "",
+    "value": "on",
+    "className": ""
+  },
+  {
+    "tag": "INPUT",
+    "id": "light",
+    "name": "",
+    "type": "radio",
+    "placeholder": "",
+    "value": "on",
+    "className": "custom-control-input"
+  },
+  {
+    "tag": "INPUT",
+    "id": "bordered",
+    "name": "",
+    "type": "radio",
+    "placeholder": "",
+    "value": "on",
+    "className": "custom-control-input"
+  },
+  {
+    "tag": "INPUT",
+    "id": "semi-dark",
+    "name": "",
+    "type": "radio",
+    "placeholder": "",
+    "value": "on",
+    "className": "custom-control-input"
+  },
+  {
+    "tag": "INPUT",
+    "id": "full-width",
+    "name": "",
+    "type": "radio",
+    "placeholder": "",
+    "value": "on",
+    "className": "custom-control-input"
+  },
+  {
+    "tag": "INPUT",
+    "id": "boxes",
+    "name": "",
+    "type": "radio",
+    "placeholder": "",
+    "value": "on",
+    "className": "custom-control-input"
+  },
+  {
+    "tag": "INPUT",
+    "id": "react-select-2-input",
+    "name": "",
+    "type": "text",
+    "placeholder": "",
+    "value": "",
+    "className": ""
+  },
+  {
+    "tag": "INPUT",
+    "id": "vertical-layout",
+    "name": "",
+    "type": "radio",
+    "placeholder": "",
+    "value": "on",
+    "className": "custom-control-input"
+  },
+  {
+    "tag": "INPUT",
+    "id": "horizontal-layout",
+    "name": "",
+    "type": "radio",
+    "placeholder": "",
+    "value": "on",
+    "className": "custom-control-input"
+  },
+  {
+    "tag": "INPUT",
+    "id": "menu-collapsed",
+    "name": "menu-collapsed",
+    "type": "checkbox",
+    "placeholder": "",
+    "value": "on",
+    "className": "custom-control-input"
+  },
+  {
+    "tag": "INPUT",
+    "id": "menu-hidden",
+    "name": "menu-hidden",
+    "type": "checkbox",
+    "placeholder": "",
+    "value": "on",
+    "className": "custom-control-input"
+  },
+  {
+    "tag": "INPUT",
+    "id": "floating",
+    "name": "",
+    "type": "radio",
+    "placeholder": "",
+    "value": "on",
+    "className": "custom-control-input"
+  },
+  {
+    "tag": "INPUT",
+    "id": "sticky",
+    "name": "",
+    "type": "radio",
+    "placeholder": "",
+    "value": "on",
+    "className": "custom-control-input"
+  },
+  {
+    "tag": "INPUT",
+    "id": "static",
+    "name": "",
+    "type": "radio",
+    "placeholder": "",
+    "value": "on",
+    "className": "custom-control-input"
+  },
+  {
+    "tag": "INPUT",
+    "id": "hidden",
+    "name": "",
+    "type": "radio",
+    "placeholder": "",
+    "value": "on",
+    "className": "custom-control-input"
+  },
+  {
+    "tag": "INPUT",
+    "id": "footer-sticky",
+    "name": "",
+    "type": "radio",
+    "placeholder": "",
+    "value": "on",
+    "className": "custom-control-input"
+  },
+  {
+    "tag": "INPUT",
+    "id": "footer-static",
+    "name": "",
+    "type": "radio",
+    "placeholder": "",
+    "value": "on",
+    "className": "custom-control-input"
+  },
+  {
+    "tag": "INPUT",
+    "id": "footer-hidden",
+    "name": "",
+    "type": "radio",
+    "placeholder": "",
+    "value": "on",
+    "className": "custom-control-input"
+  }
+]

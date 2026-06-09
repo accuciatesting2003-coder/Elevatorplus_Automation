@@ -1,0 +1,736 @@
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e6]:
+      - img "Logo" [ref=e8]
+      - generic [ref=e9] [cursor=pointer]:
+        - img [ref=e395]
+        - text: 
+    - list [ref=e14]:
+      - listitem [ref=e15]:
+        - link "Dashboards" [ref=e16] [cursor=pointer]:
+          - /url: /dashboard
+          - img [ref=e17]
+          - generic [ref=e19]: Dashboards
+      - listitem [ref=e20]:
+        - link "Company Masters" [ref=e21] [cursor=pointer]:
+          - /url: /
+          - img [ref=e22]
+          - generic [ref=e24]: Company Masters
+        - list
+      - listitem [ref=e25]:
+        - link "Firm Masters" [ref=e26] [cursor=pointer]:
+          - /url: /
+          - img [ref=e27]
+          - generic [ref=e29]: Firm Masters
+        - list [ref=e30]:
+          - generic [ref=e31]:
+            - listitem [ref=e32]:
+              - link "Firm" [ref=e33] [cursor=pointer]:
+                - /url: /master/firm-master
+                - img [ref=e34]
+                - generic [ref=e36]: Firm
+            - listitem [ref=e37]:
+              - link "Site" [ref=e38] [cursor=pointer]:
+                - /url: /master/site-master
+                - img [ref=e39]
+                - generic [ref=e42]: Site
+            - listitem [ref=e43]:
+              - link "Contact Person" [ref=e44] [cursor=pointer]:
+                - /url: /master/contact-person-master
+                - img [ref=e45]
+                - generic [ref=e47]: Contact Person
+      - listitem [ref=e48]:
+        - link "Sales Masters" [ref=e49] [cursor=pointer]:
+          - /url: /
+          - img [ref=e50]
+          - generic [ref=e51]: Sales Masters
+        - list
+      - listitem [ref=e52]:
+        - link "Sales Forms" [ref=e53] [cursor=pointer]:
+          - /url: /
+          - img [ref=e54]
+          - generic [ref=e56]: Sales Forms
+        - list
+      - listitem [ref=e57]:
+        - link "Installation (PMS)" [ref=e58] [cursor=pointer]:
+          - /url: /
+          - img [ref=e59]
+          - generic [ref=e61]: Installation (PMS)
+        - list
+      - listitem [ref=e62]:
+        - link "Service Masters" [ref=e63] [cursor=pointer]:
+          - /url: /
+          - img [ref=e64]
+          - generic [ref=e66]: Service Masters
+        - list
+      - listitem [ref=e67]:
+        - link "Asset Management" [ref=e68] [cursor=pointer]:
+          - /url: /
+          - img [ref=e69]
+          - generic [ref=e72]: Asset Management
+        - list
+      - listitem [ref=e73]:
+        - link "Bulk Import" [ref=e74] [cursor=pointer]:
+          - /url: /
+          - img [ref=e75]
+          - generic [ref=e77]: Bulk Import
+        - list
+      - listitem [ref=e78]:
+        - link "Other Masters" [ref=e79] [cursor=pointer]:
+          - /url: /master/other-master
+          - img [ref=e80]
+          - generic [ref=e82]: Other Masters
+      - listitem [ref=e83]:
+        - link "Live Tracking" [ref=e84] [cursor=pointer]:
+          - /url: /
+          - img [ref=e85]
+          - generic [ref=e87]: Live Tracking
+        - list
+      - listitem [ref=e88]:
+        - link "Reports" [ref=e89] [cursor=pointer]:
+          - /url: /
+          - img [ref=e90]
+          - generic [ref=e92]: Reports
+        - list
+      - listitem [ref=e93]:
+        - link "One Time Services Reports" [ref=e94] [cursor=pointer]:
+          - /url: /
+          - img [ref=e95]
+          - generic [ref=e97]: One Time Services Reports
+        - list
+      - listitem [ref=e98]:
+        - link "Settings" [ref=e99] [cursor=pointer]:
+          - /url: /
+          - img [ref=e100]
+          - generic [ref=e102]: Settings
+        - list
+      - listitem [ref=e103]:
+        - link "Generate QR Codes" [ref=e104] [cursor=pointer]:
+          - /url: /master/generate-qr
+          - img [ref=e105]
+          - generic [ref=e107]: Generate QR Codes
+      - listitem [ref=e108]:
+        - link "Attendance" [ref=e109] [cursor=pointer]:
+          - /url: /
+          - img [ref=e110]
+          - generic [ref=e112]: Attendance
+        - list
+      - listitem [ref=e113]:
+        - link "MATL Management" [ref=e114] [cursor=pointer]:
+          - /url: /
+          - img [ref=e115]
+          - generic [ref=e117]: MATL Management
+        - list
+      - listitem [ref=e118]:
+        - link "Approvals" [ref=e119] [cursor=pointer]:
+          - /url: /
+          - img [ref=e120]
+          - generic [ref=e124]: Approvals
+        - list
+      - listitem [ref=e125]:
+        - link "How to use" [ref=e126] [cursor=pointer]:
+          - /url: /master/gallery-view
+          - img [ref=e127]
+          - generic [ref=e129]: How to use
+      - listitem [ref=e130]:
+        - link "What's New" [ref=e131] [cursor=pointer]:
+          - /url: /master/whats-new
+          - img [ref=e132]
+          - generic [ref=e134]: What's New
+    - generic [ref=e137]:
+      - paragraph [ref=e138]: Access Web App
+      - link "Go to Web App" [ref=e140] [cursor=pointer]:
+        - /url: https://elevator-plus.web.app
+        - button "Go to Web App" [ref=e141]:
+          - img [ref=e143]
+          - text: Go to Web App
+  - navigation [ref=e146]:
+    - generic [ref=e148]:
+      - heading "Contact Person Master" [level=4] [ref=e150]
+      - generic [ref=e151]:
+        - generic [ref=e155]:
+          - img [ref=e158]
+          - searchbox "Search..." [ref=e162]
+          - group
+        - list [ref=e163]:
+          - listitem [ref=e164]:
+            - link "Language English" [ref=e165] [cursor=pointer]:
+              - /url: /
+              - img "Language" [ref=e166]
+              - generic [ref=e167]: English
+              - img [ref=e168]
+          - listitem [ref=e170]
+          - listitem [ref=e173]:
+            - link "shravani kadam Admin avatarImg" [ref=e174] [cursor=pointer]:
+              - /url: /
+              - generic [ref=e175]:
+                - generic [ref=e176]: shravani kadam
+                - generic [ref=e177]: Admin
+              - img "avatarImg" [ref=e179]
+  - generic [ref=e187]:
+    - generic [ref=e189]:
+      - heading "Add Contact Person" [level=4] [ref=e190]:
+        - text: Add Contact Person
+        - button [ref=e191] [cursor=pointer]:
+          - img [ref=e192]
+      - generic [ref=e197]:
+        - generic [ref=e199]:
+          - generic [ref=e200]:
+            - textbox "Contact Person Name *" [ref=e201]:
+              - /placeholder: " "
+            - generic: Contact Person Name *
+          - generic [ref=e202]: Enter contact person name
+        - generic [ref=e204]:
+          - generic [ref=e205]:
+            - generic [ref=e206]:
+              - generic [ref=e207]: option Cypress Test Firm 1765389704688 (8796543210) focused, 99 of 809. 24 results available for search term Firm 1. Use Up and Down to choose options, press Enter to select the currently focused option, press Escape to exit the menu, press Tab to select the option and exit the menu.
+              - generic [ref=e208]:
+                - textbox [active] [ref=e212]: Firm 1
+                - img [ref=e215] [cursor=pointer]
+              - generic [ref=e399]:
+                - generic [ref=e498] [cursor=pointer]: Cypress Test Firm 1765389704688 (8796543210)
+                - generic [ref=e499] [cursor=pointer]: Cypress Test Firm 1765389767546 (8796543210)
+                - generic [ref=e500] [cursor=pointer]: Cypress Test Firm 1765389803580 (8796543210)
+                - generic [ref=e501] [cursor=pointer]: Cypress Test Firm 1765390035375 (8796543210)
+                - generic [ref=e563] [cursor=pointer]: Firm 1 (919090909089)
+                - generic [ref=e564] [cursor=pointer]: Firm 123
+                - generic [ref=e1068] [cursor=pointer]: Test Firm 1764009751424
+                - generic [ref=e1069] [cursor=pointer]: Test Firm 1764010064933
+                - generic [ref=e1070] [cursor=pointer]: Test Firm 1764010135509
+                - generic [ref=e1071] [cursor=pointer]: Test Firm 1764010260031
+                - generic [ref=e1072] [cursor=pointer]: Test Firm 1764010274098
+                - generic [ref=e1073] [cursor=pointer]: Test Firm 1764010375431
+                - generic [ref=e1074] [cursor=pointer]: Test Firm 1764010386758
+                - generic [ref=e1075] [cursor=pointer]: Test Firm 1764010940164
+                - generic [ref=e1076] [cursor=pointer]: Test Firm 1764011498913
+                - generic [ref=e1077] [cursor=pointer]: Test Firm 1764011716333
+                - generic [ref=e1078] [cursor=pointer]: Test Firm 1765392837430 (919876543210)
+                - generic [ref=e1128] [cursor=pointer]: Updated Firm 1764009828229
+                - generic [ref=e1129] [cursor=pointer]: Updated Firm 1764010307637
+                - generic [ref=e1130] [cursor=pointer]: Updated Firm 1764010501790
+                - generic [ref=e1131] [cursor=pointer]: Updated Firm 1764010602338
+                - generic [ref=e1132] [cursor=pointer]: Updated Firm 1764011081943
+                - generic [ref=e1133] [cursor=pointer]: Updated Firm 1764011805515
+                - generic [ref=e1134] [cursor=pointer]: Updated Firm 1764161056012
+            - generic: Firm Name *
+          - generic [ref=e217]: Select firm
+        - generic [ref=e219]:
+          - generic [ref=e220]:
+            - generic [ref=e223]:
+              - textbox [ref=e227]
+              - img [ref=e230] [cursor=pointer]
+            - generic: Site Name *
+          - generic [ref=e232]: Select site
+        - generic [ref=e235]:
+          - generic [ref=e236]:
+            - generic: Contact No.*
+            - generic [ref=e238]:
+              - textbox [ref=e239]:
+                - /placeholder: " "
+                - text: "+91"
+              - 'button "India: + 91" [ref=e241] [cursor=pointer]'
+          - generic [ref=e245]: Enter your contact number
+        - generic [ref=e247]:
+          - generic [ref=e248]:
+            - textbox "Email" [ref=e249]:
+              - /placeholder: " "
+            - generic: Email
+          - generic [ref=e250]: Enter your email ID
+        - generic [ref=e252]:
+          - generic [ref=e253]:
+            - textbox [ref=e254]:
+              - /placeholder: " "
+            - generic: Note
+          - generic [ref=e255]: Enter your note here
+        - generic [ref=e257]:
+          - button " Clear" [ref=e258] [cursor=pointer]:
+            - generic [ref=e259]: 
+            - text: Clear
+          - button " Submit" [ref=e260] [cursor=pointer]:
+            - generic [ref=e261]: 
+            - text: Submit
+    - generic [ref=e265]:
+      - banner [ref=e266]:
+        - generic [ref=e268]:
+          - generic [ref=e270]:
+            - generic [ref=e271]: "Show:"
+            - 'combobox "Show: Status:" [ref=e272]':
+              - option "10"
+              - option "25" [selected]
+              - option "50"
+              - option "100"
+          - generic [ref=e274]:
+            - generic [ref=e275]: "Status:"
+            - combobox [ref=e276]:
+              - option "All"
+              - option "Active" [selected]
+              - option "Inactive"
+          - generic [ref=e279]:
+            - textbox [ref=e280]
+            - generic:
+              - text: Search
+              - generic: Owner Name
+      - table [ref=e1210]:
+        - rowgroup [ref=e1211]:
+          - row "Sr. No. Action Contact Person Name Firm Name Site Name Contact No. Email Note Status" [ref=e1212]:
+            - button "Sr. No." [ref=e1214] [cursor=pointer]:
+              - generic [ref=e1215]: Sr. No.
+            - button "Action" [ref=e1217] [cursor=pointer]:
+              - generic [ref=e1218]: Action
+            - button "Contact Person Name" [ref=e1220] [cursor=pointer]:
+              - generic [ref=e1221]: Contact Person Name
+              - img [ref=e1223]
+            - button "Firm Name" [ref=e1226] [cursor=pointer]:
+              - generic [ref=e1227]: Firm Name
+              - img [ref=e1229]
+            - button "Site Name" [ref=e1232] [cursor=pointer]:
+              - generic [ref=e1233]: Site Name
+              - img [ref=e1235]
+            - button "Contact No." [ref=e1238] [cursor=pointer]:
+              - generic [ref=e1239]: Contact No.
+              - img [ref=e1241]
+            - button "Email" [ref=e1244] [cursor=pointer]:
+              - generic [ref=e1245]: Email
+              - img [ref=e1247]
+            - button "Note" [ref=e1250] [cursor=pointer]:
+              - generic [ref=e1251]: Note
+              - img [ref=e1253]
+            - button "Status" [ref=e1256] [cursor=pointer]:
+              - generic [ref=e1257]: Status
+              - img [ref=e1259]
+        - rowgroup [ref=e1261]:
+          - row "1 Edit TEST Test inspection Test inspection +91 98888 88888 - Active" [ref=e1262]:
+            - cell "1" [ref=e1263]
+            - cell "Edit" [ref=e1264]:
+              - img "Edit" [ref=e1266] [cursor=pointer]
+            - cell "TEST" [ref=e1269]
+            - cell "Test inspection" [ref=e1270]
+            - cell "Test inspection" [ref=e1271]
+            - cell "+91 98888 88888" [ref=e1272]
+            - cell [ref=e1273]
+            - cell "-" [ref=e1274]
+            - cell "Active" [ref=e1275]:
+              - heading "Active" [level=5] [ref=e1276]:
+                - generic [ref=e1277]: Active
+          - row "2 Edit dghjkl Pulse dfvsd +91 99999 99999 - Active" [ref=e1278]:
+            - cell "2" [ref=e1279]
+            - cell "Edit" [ref=e1280]:
+              - img "Edit" [ref=e1282] [cursor=pointer]
+            - cell "dghjkl" [ref=e1285]
+            - cell "Pulse" [ref=e1286]
+            - cell "dfvsd" [ref=e1287]
+            - cell "+91 99999 99999" [ref=e1288]
+            - cell [ref=e1289]
+            - cell "-" [ref=e1290]
+            - cell "Active" [ref=e1291]:
+              - heading "Active" [level=5] [ref=e1292]:
+                - generic [ref=e1293]: Active
+          - row "3 Edit Srushti Firm1 Site2 +91 92269 56667 - Active" [ref=e1294]:
+            - cell "3" [ref=e1295]
+            - cell "Edit" [ref=e1296]:
+              - img "Edit" [ref=e1298] [cursor=pointer]
+            - cell "Srushti" [ref=e1301]
+            - cell "Firm1" [ref=e1302]
+            - cell "Site2" [ref=e1303]
+            - cell "+91 92269 56667" [ref=e1304]
+            - cell [ref=e1305]
+            - cell "-" [ref=e1306]
+            - cell "Active" [ref=e1307]:
+              - heading "Active" [level=5] [ref=e1308]:
+                - generic [ref=e1309]: Active
+          - row "4 Edit Auto Test CP Firm 1 Duplicate S1 +91 98765 43210 - Active" [ref=e1310]:
+            - cell "4" [ref=e1311]
+            - cell "Edit" [ref=e1312]:
+              - img "Edit" [ref=e1314] [cursor=pointer]
+            - cell "Auto Test CP" [ref=e1317]
+            - cell "Firm 1" [ref=e1318]
+            - cell "Duplicate S1" [ref=e1319]
+            - cell "+91 98765 43210" [ref=e1320]
+            - cell [ref=e1321]
+            - cell "-" [ref=e1322]
+            - cell "Active" [ref=e1323]:
+              - heading "Active" [level=5] [ref=e1324]:
+                - generic [ref=e1325]: Active
+          - row "5 Edit Srushti Firm1 Site1 +91 92269 56667 - Active" [ref=e1326]:
+            - cell "5" [ref=e1327]
+            - cell "Edit" [ref=e1328]:
+              - img "Edit" [ref=e1330] [cursor=pointer]
+            - cell "Srushti" [ref=e1333]
+            - cell "Firm1" [ref=e1334]
+            - cell "Site1" [ref=e1335]
+            - cell "+91 92269 56667" [ref=e1336]
+            - cell [ref=e1337]
+            - cell "-" [ref=e1338]
+            - cell "Active" [ref=e1339]:
+              - heading "Active" [level=5] [ref=e1340]:
+                - generic [ref=e1341]: Active
+          - row "6 Edit Shubham Check Same SK +91 98793 47895 - Active" [ref=e1342]:
+            - cell "6" [ref=e1343]
+            - cell "Edit" [ref=e1344]:
+              - img "Edit" [ref=e1346] [cursor=pointer]
+            - cell "Shubham Check" [ref=e1349]
+            - cell "Same" [ref=e1350]
+            - cell "SK" [ref=e1351]
+            - cell "+91 98793 47895" [ref=e1352]
+            - cell [ref=e1353]
+            - cell "-" [ref=e1354]
+            - cell "Active" [ref=e1355]:
+              - heading "Active" [level=5] [ref=e1356]:
+                - generic [ref=e1357]: Active
+          - row "7 Edit Shubham 2 Same Sk 2 +91 5461 345 345 - Active" [ref=e1358]:
+            - cell "7" [ref=e1359]
+            - cell "Edit" [ref=e1360]:
+              - img "Edit" [ref=e1362] [cursor=pointer]
+            - cell "Shubham 2" [ref=e1365]
+            - cell "Same" [ref=e1366]
+            - cell "Sk 2" [ref=e1367]
+            - cell "+91 5461 345 345" [ref=e1368]
+            - cell [ref=e1369]
+            - cell "-" [ref=e1370]
+            - cell "Active" [ref=e1371]:
+              - heading "Active" [level=5] [ref=e1372]:
+                - generic [ref=e1373]: Active
+          - row "8 Edit test test test +91 84830 13912 - Active" [ref=e1374]:
+            - cell "8" [ref=e1375]
+            - cell "Edit" [ref=e1376]:
+              - img "Edit" [ref=e1378] [cursor=pointer]
+            - cell "test" [ref=e1381]
+            - cell "test" [ref=e1382]
+            - cell "test" [ref=e1383]
+            - cell "+91 84830 13912" [ref=e1384]
+            - cell [ref=e1385]
+            - cell "-" [ref=e1386]
+            - cell "Active" [ref=e1387]:
+              - heading "Active" [level=5] [ref=e1388]:
+                - generic [ref=e1389]: Active
+          - row "9 Edit Test Test inspection Test inspection +91 525555555 - Active" [ref=e1390]:
+            - cell "9" [ref=e1391]
+            - cell "Edit" [ref=e1392]:
+              - img "Edit" [ref=e1394] [cursor=pointer]
+            - cell "Test" [ref=e1397]
+            - cell "Test inspection" [ref=e1398]
+            - cell "Test inspection" [ref=e1399]
+            - cell "+91 525555555" [ref=e1400]
+            - cell [ref=e1401]
+            - cell "-" [ref=e1402]
+            - cell "Active" [ref=e1403]:
+              - heading "Active" [level=5] [ref=e1404]:
+                - generic [ref=e1405]: Active
+          - row "10 Edit Test Test inspection Test inspection +91 98987 77766 - Active" [ref=e1406]:
+            - cell "10" [ref=e1407]
+            - cell "Edit" [ref=e1408]:
+              - img "Edit" [ref=e1410] [cursor=pointer]
+            - cell "Test" [ref=e1413]
+            - cell "Test inspection" [ref=e1414]
+            - cell "Test inspection" [ref=e1415]
+            - cell "+91 98987 77766" [ref=e1416]
+            - cell [ref=e1417]
+            - cell "-" [ref=e1418]
+            - cell "Active" [ref=e1419]:
+              - heading "Active" [level=5] [ref=e1420]:
+                - generic [ref=e1421]: Active
+          - row "11 Edit ssrushti X1 X1 +91 98777 77777 - Active" [ref=e1422]:
+            - cell "11" [ref=e1423]
+            - cell "Edit" [ref=e1424]:
+              - img "Edit" [ref=e1426] [cursor=pointer]
+            - cell "ssrushti" [ref=e1429]
+            - cell "X1" [ref=e1430]
+            - cell "X1" [ref=e1431]
+            - cell "+91 98777 77777" [ref=e1432]
+            - cell [ref=e1433]
+            - cell "-" [ref=e1434]
+            - cell "Active" [ref=e1435]:
+              - heading "Active" [level=5] [ref=e1436]:
+                - generic [ref=e1437]: Active
+          - row "12 Edit O1 Firm 1 Duplicate S1 +91 90909 09089 - Active" [ref=e1438]:
+            - cell "12" [ref=e1439]
+            - cell "Edit" [ref=e1440]:
+              - img "Edit" [ref=e1442] [cursor=pointer]
+            - cell "O1" [ref=e1445]
+            - cell "Firm 1" [ref=e1446]
+            - cell "Duplicate S1" [ref=e1447]
+            - cell "+91 90909 09089" [ref=e1448]
+            - cell [ref=e1449]
+            - cell "-" [ref=e1450]
+            - cell "Active" [ref=e1451]:
+              - heading "Active" [level=5] [ref=e1452]:
+                - generic [ref=e1453]: Active
+          - row "13 Edit O2 Firm 1 Duplicate Site 2 +91 90909 09089 - Active" [ref=e1454]:
+            - cell "13" [ref=e1455]
+            - cell "Edit" [ref=e1456]:
+              - img "Edit" [ref=e1458] [cursor=pointer]
+            - cell "O2" [ref=e1461]
+            - cell "Firm 1" [ref=e1462]
+            - cell "Duplicate Site 2" [ref=e1463]
+            - cell "+91 90909 09089" [ref=e1464]
+            - cell [ref=e1465]
+            - cell "-" [ref=e1466]
+            - cell "Active" [ref=e1467]:
+              - heading "Active" [level=5] [ref=e1468]:
+                - generic [ref=e1469]: Active
+          - row "14 Edit Qweer Stage C2 +91 92269 56667 - Active" [ref=e1470]:
+            - cell "14" [ref=e1471]
+            - cell "Edit" [ref=e1472]:
+              - img "Edit" [ref=e1474] [cursor=pointer]
+            - cell "Qweer" [ref=e1477]
+            - cell "Stage" [ref=e1478]
+            - cell "C2" [ref=e1479]
+            - cell "+91 92269 56667" [ref=e1480]
+            - cell [ref=e1481]
+            - cell "-" [ref=e1482]
+            - cell "Active" [ref=e1483]:
+              - heading "Active" [level=5] [ref=e1484]:
+                - generic [ref=e1485]: Active
+          - row "15 Edit Qwerr Stage D1 +91 92269 56667 - Active" [ref=e1486]:
+            - cell "15" [ref=e1487]
+            - cell "Edit" [ref=e1488]:
+              - img "Edit" [ref=e1490] [cursor=pointer]
+            - cell "Qwerr" [ref=e1493]
+            - cell "Stage" [ref=e1494]
+            - cell "D1" [ref=e1495]
+            - cell "+91 92269 56667" [ref=e1496]
+            - cell [ref=e1497]
+            - cell "-" [ref=e1498]
+            - cell "Active" [ref=e1499]:
+              - heading "Active" [level=5] [ref=e1500]:
+                - generic [ref=e1501]: Active
+          - row "16 Edit Qwerty Pulse SIte Aura +91 98765 43210 - Active" [ref=e1502]:
+            - cell "16" [ref=e1503]
+            - cell "Edit" [ref=e1504]:
+              - img "Edit" [ref=e1506] [cursor=pointer]
+            - cell "Qwerty" [ref=e1509]
+            - cell "Pulse" [ref=e1510]
+            - cell "SIte Aura" [ref=e1511]
+            - cell "+91 98765 43210" [ref=e1512]
+            - cell [ref=e1513]
+            - cell "-" [ref=e1514]
+            - cell "Active" [ref=e1515]:
+              - heading "Active" [level=5] [ref=e1516]:
+                - generic [ref=e1517]: Active
+          - row "17 Edit Qwerty Pulse Site Galaxy +91 98765 43210 - Active" [ref=e1518]:
+            - cell "17" [ref=e1519]
+            - cell "Edit" [ref=e1520]:
+              - img "Edit" [ref=e1522] [cursor=pointer]
+            - cell "Qwerty" [ref=e1525]
+            - cell "Pulse" [ref=e1526]
+            - cell "Site Galaxy" [ref=e1527]
+            - cell "+91 98765 43210" [ref=e1528]
+            - cell [ref=e1529]
+            - cell "-" [ref=e1530]
+            - cell "Active" [ref=e1531]:
+              - heading "Active" [level=5] [ref=e1532]:
+                - generic [ref=e1533]: Active
+          - row "18 Edit Srushti Cloud Firm Z1 +91 2345 678 900 - Active" [ref=e1534]:
+            - cell "18" [ref=e1535]
+            - cell "Edit" [ref=e1536]:
+              - img "Edit" [ref=e1538] [cursor=pointer]
+            - cell "Srushti" [ref=e1541]
+            - cell "Cloud Firm" [ref=e1542]
+            - cell "Z1" [ref=e1543]
+            - cell "+91 2345 678 900" [ref=e1544]
+            - cell [ref=e1545]
+            - cell "-" [ref=e1546]
+            - cell "Active" [ref=e1547]:
+              - heading "Active" [level=5] [ref=e1548]:
+                - generic [ref=e1549]: Active
+          - row "19 Edit Ganesh test ganesh site ganesh site +91 84830 13900 - Active" [ref=e1550]:
+            - cell "19" [ref=e1551]
+            - cell "Edit" [ref=e1552]:
+              - img "Edit" [ref=e1554] [cursor=pointer]
+            - cell "Ganesh test" [ref=e1557]
+            - cell "ganesh site" [ref=e1558]
+            - cell "ganesh site" [ref=e1559]
+            - cell "+91 84830 13900" [ref=e1560]
+            - cell [ref=e1561]
+            - cell "-" [ref=e1562]
+            - cell "Active" [ref=e1563]:
+              - heading "Active" [level=5] [ref=e1564]:
+                - generic [ref=e1565]: Active
+          - row "20 Edit Sahil testing 1 test firm by sahil Sahil testing +91 84830 13911 - Active" [ref=e1566]:
+            - cell "20" [ref=e1567]
+            - cell "Edit" [ref=e1568]:
+              - img "Edit" [ref=e1570] [cursor=pointer]
+            - cell "Sahil testing 1" [ref=e1573]
+            - cell "test firm by sahil" [ref=e1574]
+            - cell "Sahil testing" [ref=e1575]
+            - cell "+91 84830 13911" [ref=e1576]
+            - cell [ref=e1577]
+            - cell "-" [ref=e1578]
+            - cell "Active" [ref=e1579]:
+              - heading "Active" [level=5] [ref=e1580]:
+                - generic [ref=e1581]: Active
+          - row "21 Edit Sale testing 1 test firm by sahil sale testing +91 84830 13913 test Active" [ref=e1582]:
+            - cell "21" [ref=e1583]
+            - cell "Edit" [ref=e1584]:
+              - img "Edit" [ref=e1586] [cursor=pointer]
+            - cell "Sale testing 1" [ref=e1589]
+            - cell "test firm by sahil" [ref=e1590]
+            - cell "sale testing" [ref=e1591]
+            - cell "+91 84830 13913" [ref=e1592]
+            - cell [ref=e1593]
+            - cell "test" [ref=e1594]
+            - cell "Active" [ref=e1595]:
+              - heading "Active" [level=5] [ref=e1596]:
+                - generic [ref=e1597]: Active
+          - row "22 Edit Sahil testing sales user firm sales user +91 84830 13912 sj1051384@gmail.com Test Active" [ref=e1598]:
+            - cell "22" [ref=e1599]
+            - cell "Edit" [ref=e1600]:
+              - img "Edit" [ref=e1602] [cursor=pointer]
+            - cell "Sahil testing" [ref=e1605]
+            - cell "sales user firm" [ref=e1606]
+            - cell "sales user" [ref=e1607]
+            - cell "+91 84830 13912" [ref=e1608]
+            - cell "sj1051384@gmail.com" [ref=e1609]
+            - cell "Test" [ref=e1610]
+            - cell "Active" [ref=e1611]:
+              - heading "Active" [level=5] [ref=e1612]:
+                - generic [ref=e1613]: Active
+          - row "23 Edit 8483013912 admin site admin site +91 88888 88888 - Active" [ref=e1614]:
+            - cell "23" [ref=e1615]
+            - cell "Edit" [ref=e1616]:
+              - img "Edit" [ref=e1618] [cursor=pointer]
+            - cell "8483013912" [ref=e1621]
+            - cell "admin site" [ref=e1622]
+            - cell "admin site" [ref=e1623]
+            - cell "+91 88888 88888" [ref=e1624]
+            - cell [ref=e1625]
+            - cell "-" [ref=e1626]
+            - cell "Active" [ref=e1627]:
+              - heading "Active" [level=5] [ref=e1628]:
+                - generic [ref=e1629]: Active
+          - row "24 Edit Admin user end to end test admin firm Admin site +91 84830 13912 sahiljadhav@accucia.co sahil is doing the end to end testing of appllication, by admin user Active" [ref=e1630]:
+            - cell "24" [ref=e1631]
+            - cell "Edit" [ref=e1632]:
+              - img "Edit" [ref=e1634] [cursor=pointer]
+            - cell "Admin user end to end test" [ref=e1637]
+            - cell "admin firm" [ref=e1638]
+            - cell "Admin site" [ref=e1639]
+            - cell "+91 84830 13912" [ref=e1640]
+            - cell "sahiljadhav@accucia.co" [ref=e1641]
+            - cell "sahil is doing the end to end testing of appllication, by admin user" [ref=e1642]
+            - cell "Active" [ref=e1643]:
+              - heading "Active" [level=5] [ref=e1644]:
+                - generic [ref=e1645]: Active
+          - row "25 Edit ee ww ww +91 90909 09090 - Active" [ref=e1646]:
+            - cell "25" [ref=e1647]
+            - cell "Edit" [ref=e1648]:
+              - img "Edit" [ref=e1650] [cursor=pointer]
+            - cell "ee" [ref=e1653]
+            - cell "ww" [ref=e1654]
+            - cell "ww" [ref=e1655]
+            - cell "+91 90909 09090" [ref=e1656]
+            - cell [ref=e1657]
+            - cell "-" [ref=e1658]
+            - cell "Active" [ref=e1659]:
+              - heading "Active" [level=5] [ref=e1660]:
+                - generic [ref=e1661]: Active
+      - list [ref=e1662]:
+        - listitem [ref=e1663]:
+          - button "Previous page" [disabled]
+        - listitem [ref=e1664]:
+          - button "Page 1 is your current page" [ref=e1665] [cursor=pointer]: "1"
+        - listitem [ref=e1666]:
+          - button "Page 2" [ref=e1667] [cursor=pointer]: "2"
+        - listitem [ref=e1668]:
+          - button "Page 3" [ref=e1669] [cursor=pointer]: "3"
+        - listitem [ref=e1670]:
+          - button "..." [ref=e1671] [cursor=pointer]
+        - listitem [ref=e1672]:
+          - button "Page 30" [ref=e1673] [cursor=pointer]: "30"
+        - listitem [ref=e1674]:
+          - button "Page 31" [ref=e1675] [cursor=pointer]: "31"
+        - listitem [ref=e1676]:
+          - button "Page 32" [ref=e1677] [cursor=pointer]: "32"
+        - listitem [ref=e1678]:
+          - button "Next page" [ref=e1679] [cursor=pointer]
+  - generic [ref=e286]:
+    - generic [ref=e287]:
+      - heading "Theme Customizer" [level=4] [ref=e288]
+      - paragraph [ref=e289]: Customize & Preview in Real Time
+      - link [ref=e290] [cursor=pointer]:
+        - /url: /
+        - img [ref=e291]
+    - separator [ref=e294]
+    - generic [ref=e295]:
+      - generic [ref=e296]:
+        - paragraph [ref=e297]: Skin
+        - generic [ref=e298]:
+          - generic [ref=e299]:
+            - radio "Light" [checked] [ref=e300]
+            - generic [ref=e301]: Light
+          - generic [ref=e302]:
+            - radio "Bordered" [ref=e303]
+            - generic [ref=e304]: Bordered
+          - generic [ref=e305]:
+            - radio "Semi Dark" [ref=e306]
+            - generic [ref=e307]: Semi Dark
+      - generic [ref=e308]:
+        - paragraph [ref=e309]: Content Width
+        - generic [ref=e310]:
+          - generic [ref=e311]:
+            - radio "Full Width" [checked] [ref=e312]
+            - generic [ref=e313]: Full Width
+          - generic [ref=e314]:
+            - radio "Boxed" [ref=e315]
+            - generic [ref=e316]: Boxed
+      - generic [ref=e318]:
+        - paragraph [ref=e319]: Router Transition
+        - generic [ref=e322]:
+          - generic [ref=e323]:
+            - generic [ref=e324]: Fade
+            - textbox [ref=e327]
+          - img [ref=e330] [cursor=pointer]
+    - separator [ref=e332]
+    - generic [ref=e333]:
+      - paragraph [ref=e334]: Menu Layout
+      - generic [ref=e336]:
+        - generic [ref=e337]:
+          - radio "Vertical" [checked] [ref=e338]
+          - generic [ref=e339]: Vertical
+        - generic [ref=e340]:
+          - radio "Horizontal" [ref=e341]
+          - generic [ref=e342]: Horizontal
+      - generic [ref=e344]:
+        - paragraph [ref=e345]: Menu Collapsed
+        - checkbox [ref=e347]
+      - generic [ref=e349]:
+        - paragraph [ref=e350]: Menu Hidden
+        - checkbox [ref=e352]
+    - separator [ref=e353]
+    - generic [ref=e355]:
+      - paragraph [ref=e356]: Navbar Type
+      - generic [ref=e357]:
+        - generic [ref=e358]:
+          - radio "Floating" [checked] [ref=e359]
+          - generic [ref=e360]: Floating
+        - generic [ref=e361]:
+          - radio "Sticky" [ref=e362]
+          - generic [ref=e363]: Sticky
+        - generic [ref=e364]:
+          - radio "Static" [ref=e365]
+          - generic [ref=e366]: Static
+        - generic [ref=e367]:
+          - radio "Hidden" [ref=e368]
+          - generic [ref=e369]: Hidden
+    - separator [ref=e370]
+    - generic [ref=e372]:
+      - paragraph [ref=e373]: Footer Type
+      - generic [ref=e374]:
+        - generic [ref=e375]:
+          - radio "Sticky" [ref=e376]
+          - generic [ref=e377]: Sticky
+        - generic [ref=e378]:
+          - radio "Static" [checked] [ref=e379]
+          - generic [ref=e380]: Static
+        - generic [ref=e381]:
+          - radio "Hidden" [ref=e382]
+          - generic [ref=e383]: Hidden
+  - contentinfo [ref=e384]:
+    - paragraph [ref=e385]:
+      - generic [ref=e386]:
+        - text: Copyright © 2026, Designed & Developed by
+        - link "Accucia Softwares Pvt. Ltd." [ref=e387] [cursor=pointer]:
+          - /url: http://www.accucia.com
+  - button "Help & Support" [ref=e389] [cursor=pointer]:
+    - img [ref=e390]
+    - text: Help & Support

@@ -1,0 +1,217 @@
+[
+  {
+    "tag": "SELECT",
+    "id": "prefixYearType",
+    "name": "prefixYearType",
+    "type": "select-one",
+    "value": "Manual",
+    "className": "modern-form-input form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "",
+    "type": "text",
+    "placeholder": " ",
+    "value": "24-06",
+    "className": "modern-form-input"
+  },
+  {
+    "tag": "INPUT",
+    "id": "financialYearForPrefix",
+    "name": "financialYearForPrefix",
+    "type": "text",
+    "placeholder": " ",
+    "value": "",
+    "className": "modern-form-input form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "quotation_template",
+    "type": "text",
+    "placeholder": "Enter template for Quotation",
+    "value": "{financialYear}{serialNumber}",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "job_template",
+    "type": "text",
+    "placeholder": "Enter template for Job",
+    "value": "{financialYear}{serialNumber}",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "pm_template",
+    "type": "text",
+    "placeholder": "Enter template for PM",
+    "value": "{serialNumber}",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "pm_quotation_template",
+    "type": "text",
+    "placeholder": "Enter template for PM Quotation",
+    "value": "{serialNumber}",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "complaint_template",
+    "type": "text",
+    "placeholder": "Enter template for Complaint",
+    "value": "{financialYear}{serialNumber}",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "repair_order_template",
+    "type": "text",
+    "placeholder": "Enter template for Repair Order",
+    "value": "{financialYear}{serialNumber}",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "dc_template",
+    "type": "text",
+    "placeholder": "Enter template for DC",
+    "value": "{financialYear}{serialNumber}",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "po_template",
+    "type": "text",
+    "placeholder": "Enter template for PO",
+    "value": "{financialYear}{serialNumber}",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "return_order_template",
+    "type": "text",
+    "placeholder": "Enter template for Return Order",
+    "value": "{financialYear}{serialNumber}",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "contract_template",
+    "type": "text",
+    "placeholder": "Enter template for PM Contract",
+    "value": "{financialYear}{serialNumber}",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "quotation_contract_template",
+    "type": "text",
+    "placeholder": "Enter template for Quotation Contract",
+    "value": "{financialYear}{serialNumber}",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "modernization_job_template",
+    "type": "text",
+    "placeholder": "Enter template for Modernization Job",
+    "value": "",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "modernization_quotation_template",
+    "type": "text",
+    "placeholder": "Enter template for Modernization Quotation",
+    "value": "",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "requisition_template",
+    "type": "text",
+    "placeholder": "Enter template for Requisition",
+    "value": "{financialYear}{serialNumber}",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "work_order_template",
+    "type": "text",
+    "placeholder": "Enter template for Work Order",
+    "value": "{financialYear}{serialNumber}",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "one_time_service_quotation_template",
+    "type": "text",
+    "placeholder": "Enter template for One-time Service Quotation",
+    "value": "{financialYear}{serialNumber}",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "one_time_service_template",
+    "type": "text",
+    "placeholder": "Enter template for One-time Service",
+    "value": "{financialYear}{serialNumber}",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "sales_order_quotation_template",
+    "type": "text",
+    "placeholder": "Enter template for Sales Order Quotation",
+    "value": "",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "sales_order_quotation_number",
+    "type": "text",
+    "placeholder": "Enter start number",
+    "value": "0",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "sales_order_pm_template",
+    "type": "text",
+    "placeholder": "Enter template for Sales Order PM",
+    "value": "",
+    "className": "form-control"
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "sales_order_pm_number",
+    "type": "text",
+    "placeholder": "Enter start number",
+    "value": "0",
+    "className": "form-control"
+  }
+]

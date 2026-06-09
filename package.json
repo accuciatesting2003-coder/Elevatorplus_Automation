@@ -11,6 +11,7 @@
     "test:firefox": "playwright test --project=firefox",
     "test:webkit": "playwright test --project=webkit",
     "test:prod": "TEST_ENV=prod playwright test",
+    "test:masters": "playwright test tests/Company-master/ tests/Sales-master/ --project=chromium",
     "test:login": "playwright test tests/login.spec.ts --project=chromium-no-auth",
     "test:setup": "playwright test --project=setup --headed",
     "report": "playwright show-report",
