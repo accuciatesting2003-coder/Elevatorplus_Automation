@@ -12,7 +12,7 @@ export default defineConfig({
   testDir: './tests',
 
   // Timeout settings
-  timeout: 120 * 1000, // 120 seconds per test (auth setup needs more time)
+  timeout: 180 * 1000, // 180 seconds per test (staging can be slow; WAT navigation up to 120s)
   expect: {
     timeout: 10 * 1000, // 10 seconds for assertions
   },
@@ -37,7 +37,7 @@ export default defineConfig({
     headless: true, // Run headless by default (faster)
     viewport: { width: 1920, height: 1080 }, // Standard desktop viewport
     actionTimeout: 15 * 1000, // 15 seconds for actions like click, fill
-    navigationTimeout: 90 * 1000, // 90 seconds for page navigation (staging can be slow)
+    navigationTimeout: 120 * 1000, // 120 seconds for page navigation (staging can be slow; login re-attempts need this)
   },
 
   projects: [

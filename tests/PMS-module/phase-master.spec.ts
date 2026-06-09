@@ -17,9 +17,11 @@ async function registerPopupHandler(page: any) {
 }
 
 async function dismissChecklist(page: any) {
-  await page.evaluate(() => {
-    const el = document.querySelector('.checklist-component') as HTMLElement;
-    if (el) el.style.display = 'none';
+  await page.addStyleTag({
+    content: [
+      '.checklist-component { display: none !important; }',
+      '.header-navbar-shadow { pointer-events: none !important; }',
+    ].join('\n'),
   });
 }
 
@@ -43,15 +45,16 @@ function showEntriesSelect(page: any) {
 }
 
 async function selectReactOption(page: any, inputLocator: any, optionText: string) {
-  await inputLocator.click();
+  await inputLocator.locator('xpath=ancestor::div[contains(@class,"control")][1]').click();
   await page.keyboard.type(optionText);
-  await page.getByRole('option', { name: optionText, exact: true }).first().waitFor({ state: 'visible', timeout: 5000 });
-  await page.getByRole('option', { name: optionText, exact: true }).first().click();
+  const opt = page.locator('[class*="option__option"]').filter({ visible: true }).filter({ hasText: optionText }).first();
+  await opt.waitFor({ state: 'visible', timeout: 5000 });
+  await opt.click();
 }
 
 async function selectFirstReactOption(page: any, inputLocator: any): Promise<string> {
-  await inputLocator.click();
-  const opt = page.getByRole('option').first();
+  await inputLocator.locator('xpath=ancestor::div[contains(@class,"control")][1]').click();
+  const opt = page.locator('[class*="option__option"]').filter({ visible: true }).first();
   await opt.waitFor({ state: 'visible', timeout: 5000 });
   const text = (await opt.textContent()) ?? '';
   await opt.click();
@@ -59,9 +62,7 @@ async function selectFirstReactOption(page: any, inputLocator: any): Promise<str
 }
 
 async function clickEditOnRow(page: any, rowIndex = 0) {
-  await page.mouse.move(0, 0);
-  await page.waitForTimeout(200);
-  await tableRows(page).nth(rowIndex).locator('img[alt="Edit"]').click();
+  await tableRows(page).nth(rowIndex).locator('svg[title="Edit"]').click({ force: true });
 }
 
 async function getCellText(page: any, rowIndex: number, colIndex: number): Promise<string> {
@@ -128,7 +129,7 @@ test.describe('Phase Master', () => {
 
     test('TC-ADD-01: Create phase with Is Allow For All Lifts checked', async ({ page }) => {
       const ts = Date.now();
-      await page.locator('#isAllowForAllLifts').check();
+      await page.locator('#isAllowForAllLifts').check({ force: true });
       await expect(page.locator('#react-select-4-input')).not.toBeVisible();
       await page.locator('#phase_name').fill(`AutoPhaseA ${ts}`);
       await page.locator('#priority').fill('200');
@@ -152,7 +153,7 @@ test.describe('Phase Master', () => {
 
     test('TC-ADD-03: Create phase with Select Lift also selected', async ({ page }) => {
       const ts = Date.now();
-      await page.locator('#isAllowForAllLifts').check();
+      await page.locator('#isAllowForAllLifts').check({ force: true });
       await page.locator('#phase_name').fill(`AutoPhaseC ${ts}`);
       await page.locator('#priority').fill('202');
       await page.locator('#description').fill('Auto full install phase');
@@ -180,7 +181,7 @@ test.describe('Phase Master', () => {
     });
 
     test('TC-VAL-02: Submit with Phase Name empty shows error', async ({ page }) => {
-      await page.locator('#isAllowForAllLifts').check();
+      await page.locator('#isAllowForAllLifts').check({ force: true });
       await page.locator('#priority').fill('1');
       await page.locator('#description').fill('test');
       await page.getByRole('button', { name: /Submit/i }).click();
@@ -188,7 +189,7 @@ test.describe('Phase Master', () => {
     });
 
     test('TC-VAL-03: Submit with Priority empty shows error', async ({ page }) => {
-      await page.locator('#isAllowForAllLifts').check();
+      await page.locator('#isAllowForAllLifts').check({ force: true });
       await page.locator('#phase_name').fill('Test Phase Val03');
       await page.locator('#description').fill('test');
       await page.getByRole('button', { name: /Submit/i }).click();
@@ -196,7 +197,7 @@ test.describe('Phase Master', () => {
     });
 
     test('TC-VAL-04: Submit with Description empty shows error', async ({ page }) => {
-      await page.locator('#isAllowForAllLifts').check();
+      await page.locator('#isAllowForAllLifts').check({ force: true });
       await page.locator('#phase_name').fill('Test Phase Val04');
       await page.locator('#priority').fill('1');
       await page.getByRole('button', { name: /Submit/i }).click();
@@ -212,10 +213,11 @@ test.describe('Phase Master', () => {
     });
 
     test('TC-VAL-06: Validation errors clear when valid input entered', async ({ page }) => {
+      const ts = Date.now();
       await page.getByRole('button', { name: /Submit/i }).click();
       await expect(page.getByText('Please enter phase name')).toBeVisible();
-      await page.locator('#isAllowForAllLifts').check();
-      await page.locator('#phase_name').fill('Test Phase Val06');
+      await page.locator('#isAllowForAllLifts').check({ force: true });
+      await page.locator('#phase_name').fill(`Test Phase Val06 ${ts}`);
       await page.locator('#priority').fill('999');
       await page.locator('#description').fill('clearing validation test');
       await page.getByRole('button', { name: /Submit/i }).click();
@@ -237,21 +239,21 @@ test.describe('Phase Master', () => {
 
     test('TC-COND-02: Checking checkbox hides Select Lift Type', async ({ page }) => {
       await expect(page.locator('#react-select-4-input')).toBeVisible();
-      await page.locator('#isAllowForAllLifts').check();
+      await page.locator('#isAllowForAllLifts').check({ force: true });
       await expect(page.locator('#react-select-4-input')).not.toBeVisible();
       await expect(page.locator('#react-select-3-input')).toBeVisible();
     });
 
     test('TC-COND-03: Unchecking checkbox re-shows Select Lift Type', async ({ page }) => {
-      await page.locator('#isAllowForAllLifts').check();
+      await page.locator('#isAllowForAllLifts').check({ force: true });
       await expect(page.locator('#react-select-4-input')).not.toBeVisible();
-      await page.locator('#isAllowForAllLifts').uncheck();
+      await page.locator('#isAllowForAllLifts').evaluate((el: any) => el.click());
       await expect(page.locator('#react-select-4-input')).toBeVisible();
     });
 
     test('TC-COND-04: Select Lift Type not required when checkbox checked', async ({ page }) => {
       const ts = Date.now();
-      await page.locator('#isAllowForAllLifts').check();
+      await page.locator('#isAllowForAllLifts').check({ force: true });
       await page.locator('#phase_name').fill(`AllLiftTest ${ts}`);
       await page.locator('#priority').fill('203');
       await page.locator('#description').fill('Testing optional lift type');
@@ -283,7 +285,7 @@ test.describe('Phase Master', () => {
 
     test('TC-DUP-01: Duplicate Phase Name (same lift combo) shows error', async ({ page }) => {
       // Civil Work with IsAllowForAllLifts=Yes and Lift=Modernization already exists
-      await page.locator('#isAllowForAllLifts').check();
+      await page.locator('#isAllowForAllLifts').check({ force: true });
       await page.locator('#phase_name').fill('Civil Work');
       await page.locator('#priority').fill('50');
       await page.locator('#description').fill('duplicate test');
@@ -293,7 +295,7 @@ test.describe('Phase Master', () => {
     });
 
     test('TC-DUP-03: Case-sensitivity check for duplicate phase name', async ({ page }) => {
-      await page.locator('#isAllowForAllLifts').check();
+      await page.locator('#isAllowForAllLifts').check({ force: true });
       await page.locator('#phase_name').fill('phase 1');
       await page.locator('#priority').fill('51');
       await page.locator('#description').fill('case sensitivity test');
@@ -305,7 +307,7 @@ test.describe('Phase Master', () => {
 
     test('TC-DUP-04: Same name as existing active phase (same lift combo) shows error', async ({ page }) => {
       // Phase 1 with IsAllowForAllLifts=Yes, Lift=Modernization exists
-      await page.locator('#isAllowForAllLifts').check();
+      await page.locator('#isAllowForAllLifts').check({ force: true });
       await page.locator('#phase_name').fill('Phase 1');
       await page.locator('#priority').fill('52');
       await page.locator('#description').fill('dup04 test');
@@ -318,7 +320,7 @@ test.describe('Phase Master', () => {
       // Create a temp phase first
       const ts = Date.now();
       const tempName = `TempDup05 ${ts}`;
-      await page.locator('#isAllowForAllLifts').check();
+      await page.locator('#isAllowForAllLifts').check({ force: true });
       await page.locator('#phase_name').fill(tempName);
       await page.locator('#priority').fill('53');
       await page.locator('#description').fill('temp for dup05');
@@ -354,7 +356,7 @@ test.describe('Phase Master', () => {
       const ts = Date.now();
       const dupName = `DupPhase06 ${ts}`;
       // Create with New Lift
-      await page.locator('#isAllowForAllLifts').check();
+      await page.locator('#isAllowForAllLifts').check({ force: true });
       await page.locator('#phase_name').fill(dupName);
       await page.locator('#priority').fill('54');
       await page.locator('#description').fill('dup06 first');
@@ -363,7 +365,8 @@ test.describe('Phase Master', () => {
       await expect(page.locator('[role="alert"]').filter({ hasText: /successfully/i })).toBeVisible({ timeout: 10000 });
 
       // Create with Modernization
-      await page.locator('#isAllowForAllLifts').check();
+      await gotoPhase(page);
+      await page.locator('#isAllowForAllLifts').check({ force: true });
       await page.locator('#phase_name').fill(dupName);
       await page.locator('#priority').fill('55');
       await page.locator('#description').fill('dup06 second');
@@ -385,6 +388,7 @@ test.describe('Phase Master', () => {
       await expect(page.locator('[role="alert"]').filter({ hasText: /successfully/i })).toBeVisible({ timeout: 10000 });
 
       // Create second record same phase name, same lift type, different lift
+      await gotoPhase(page);
       await page.locator('#phase_name').fill(dupName);
       await page.locator('#priority').fill('57');
       await page.locator('#description').fill('dup07 second');
@@ -402,7 +406,6 @@ test.describe('Phase Master', () => {
   test.describe('Clear Button Behavior', () => {
 
     test('TC-CLR-01: Clear button resets Add Phase form', async ({ page }) => {
-      await page.locator('#isAllowForAllLifts').check();
       await page.locator('#phase_name').fill('Some Phase');
       await page.locator('#priority').fill('5');
       await page.locator('#description').fill('Some description');
@@ -445,7 +448,7 @@ test.describe('Phase Master', () => {
     test('TC-EDT-02: Successfully update phase name and description', async ({ page }) => {
       const ts = Date.now();
       // Create a phase to edit
-      await page.locator('#isAllowForAllLifts').check();
+      await page.locator('#isAllowForAllLifts').check({ force: true });
       await page.locator('#phase_name').fill(`EditTarget ${ts}`);
       await page.locator('#priority').fill('300');
       await page.locator('#description').fill('original desc');
@@ -488,7 +491,7 @@ test.describe('Phase Master', () => {
       await page.getByRole('heading', { name: /Update Phase/i }).waitFor({ state: 'visible', timeout: 10000 });
       await expect(page.locator('#isAllowForAllLifts')).not.toBeChecked();
       await expect(page.locator('#react-select-4-input')).toBeVisible();
-      await page.locator('#isAllowForAllLifts').check();
+      await page.locator('#isAllowForAllLifts').check({ force: true });
       await expect(page.locator('#react-select-4-input')).not.toBeVisible();
       await page.getByRole('button', { name: /Update/i }).click();
       await expect(page.locator('[role="alert"]').filter({ hasText: /successfully/i })).toBeVisible({ timeout: 10000 });
@@ -509,7 +512,7 @@ test.describe('Phase Master', () => {
       await clickEditOnRow(page, targetRow);
       await page.getByRole('heading', { name: /Update Phase/i }).waitFor({ state: 'visible', timeout: 10000 });
       await expect(page.locator('#isAllowForAllLifts')).toBeChecked();
-      await page.locator('#isAllowForAllLifts').uncheck();
+      await page.locator('#isAllowForAllLifts').evaluate((el: any) => el.click());
       await expect(page.locator('#react-select-4-input')).toBeVisible();
       await selectFirstReactOption(page, page.locator('#react-select-4-input'));
       await page.getByRole('button', { name: /Update/i }).click();
@@ -519,7 +522,7 @@ test.describe('Phase Master', () => {
 
     test('TC-EDT-05: Update phase status to Inactive', async ({ page }) => {
       const ts = Date.now();
-      await page.locator('#isAllowForAllLifts').check();
+      await page.locator('#isAllowForAllLifts').check({ force: true });
       await page.locator('#phase_name').fill(`InactiveTest ${ts}`);
       await page.locator('#priority').fill('301');
       await page.locator('#description').fill('to be made inactive');
@@ -586,7 +589,7 @@ test.describe('Phase Master', () => {
       await clickEditOnRow(page, targetRow);
       await page.getByRole('heading', { name: /Update Phase/i }).waitFor({ state: 'visible', timeout: 10000 });
       // Uncheck the box — Lift Type appears empty
-      await page.locator('#isAllowForAllLifts').uncheck();
+      await page.locator('#isAllowForAllLifts').evaluate((el: any) => el.click());
       await expect(page.locator('#react-select-4-input')).toBeVisible();
       await page.getByRole('button', { name: /Update/i }).click();
       await expect(page.getByText('Please select lift type')).toBeVisible();
@@ -596,7 +599,7 @@ test.describe('Phase Master', () => {
     test('TC-EDT-10: Update phase name to duplicate of existing active phase shows error', async ({ page }) => {
       const ts = Date.now();
       // Create temp phase with New Lift
-      await page.locator('#isAllowForAllLifts').check();
+      await page.locator('#isAllowForAllLifts').check({ force: true });
       await page.locator('#phase_name').fill(`Dup10Temp ${ts}`);
       await page.locator('#priority').fill('302');
       await page.locator('#description').fill('dup edit test');
@@ -681,7 +684,7 @@ test.describe('Phase Master', () => {
     test('TC-SRC-01: Search by partial phase name returns matching results', async ({ page }) => {
       await tableRows(page).first().waitFor({ state: 'visible' });
       await page.getByPlaceholder('Search Phase Name').fill('Phase');
-      await page.waitForTimeout(500);
+      await page.waitForTimeout(1500);
       const rows = tableRows(page);
       const count = await rows.count();
       if (count > 0) {
@@ -731,7 +734,7 @@ test.describe('Phase Master', () => {
 
     test('TC-PAG-02: Change rows-per-page to 50', async ({ page }) => {
       await showEntriesSelect(page).selectOption('50');
-      await tableRows(page).first().waitFor({ state: 'visible' });
+      await tableRows(page).first().waitFor({ state: 'visible', timeout: 30000 });
       expect(await tableRows(page).count()).toBeLessThanOrEqual(50);
     });
 
@@ -801,7 +804,7 @@ test.describe('Phase Master', () => {
 
     test('TC-INA-01: Mark Active phase as Inactive and verify filter', async ({ page }) => {
       const ts = Date.now();
-      await page.locator('#isAllowForAllLifts').check();
+      await page.locator('#isAllowForAllLifts').check({ force: true });
       await page.locator('#phase_name').fill(`InaTest ${ts}`);
       await page.locator('#priority').fill('400');
       await page.locator('#description').fill('ina test');

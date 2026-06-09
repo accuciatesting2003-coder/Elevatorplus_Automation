@@ -11,11 +11,28 @@ import { LoginPage } from '@page-objects/login-page';
 export const test = base.extend<{ page: Page }, { workerPage: Page }>({
 
   workerPage: [async ({ browser }, use) => {
-    const context: BrowserContext = await browser.newContext();
+    const context: BrowserContext = await browser.newContext({ viewport: { width: 1920, height: 1080 } });
     const page: Page = await context.newPage();
 
     const loginPage = new LoginPage(page);
-    await loginPage.goto();
+    // Retry up to 3 times on transient network/DNS errors at startup
+    const NETWORK_ERROR = /ERR_INTERNET_DISCONNECTED|ERR_NETWORK_CHANGED|ERR_NAME_NOT_RESOLVED|Timeout \d+ms exceeded/;
+    let lastError: any;
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        await loginPage.goto();
+        lastError = null;
+        break;
+      } catch (e: any) {
+        if (NETWORK_ERROR.test(e.message)) {
+          lastError = e;
+          await page.waitForTimeout(12000 * attempt);
+        } else {
+          throw e;
+        }
+      }
+    }
+    if (lastError) throw lastError;
     await loginPage.expectToBeOnLoginPage();
     await loginPage.loginWithEnvCredentials();
 

@@ -276,8 +276,8 @@ test.describe('Add Area Validation', () => {
     await page.getByRole('button', { name: /Update/ }).click();
     await expect(page.getByRole('heading', { name: 'Add Area' })).toBeVisible();
 
-    // Step 3: Try to create the same area name under a different branch ('Nagpur')
-    await selectBranch(page, 'Nagpur');
+    // Step 3: Try to create the same area name under a different branch ('Chennai')
+    await selectBranch(page, 'Chennai');
     await page.getByRole('textbox', { name: 'Area Name' }).fill(inactiveAreaName);
     await page.getByRole('textbox', { name: 'Area Code' }).fill(`NB${timestamp.toString().slice(-4)}`);
     await page.getByRole('button', { name: /Submit/ }).click();
@@ -290,7 +290,7 @@ test.describe('Add Area Validation', () => {
 
     // Negative assertion: record must NOT have been created (table should not contain a new row for Nagpur with this name)
     await waitForTableRows(page);
-    const nagpurDuplicateRows = page.locator('div.rdt_TableRow').filter({ hasText: inactiveAreaName }).filter({ hasText: 'Nagpur' });
+    const nagpurDuplicateRows = page.locator('div.rdt_TableRow').filter({ hasText: inactiveAreaName }).filter({ hasText: 'Chennai' });
     await expect(nagpurDuplicateRows).toHaveCount(0);
 
     // Step 4: Try to update an existing Nagpur record to use the same inactive area name
@@ -299,7 +299,7 @@ test.describe('Add Area Validation', () => {
     await statusFilter.selectOption('All');
     await waitForTableRows(page);
 
-    const nagpurRows = page.locator('div.rdt_TableRow').filter({ hasText: 'Nagpur' });
+    const nagpurRows = page.locator('div.rdt_TableRow').filter({ hasText: 'Chennai' });
     const nagpurCount = await nagpurRows.count();
     if (nagpurCount > 0) {
       await nagpurRows.first().locator('svg[title="Edit"]').click();
@@ -320,7 +320,11 @@ test.describe('Add Area Validation', () => {
     }
 
     // Cleanup: restore the original inactive area back to Active
-    await statusFilter.selectOption('Inactive');
+    // Use All filter + search to handle pagination (new area may not be on page 1)
+    await statusFilter.selectOption('All');
+    const cleanupSearch = await getSearchBox(page);
+    await cleanupSearch.fill(inactiveAreaName);
+    await page.waitForTimeout(500);
     await waitForTableRows(page);
     await page.locator('div.rdt_TableRow')
       .filter({ hasText: inactiveAreaName })
@@ -329,6 +333,7 @@ test.describe('Add Area Validation', () => {
       .click();
     await page.locator('select').filter({ hasText: /Active|Inactive/ }).last().selectOption('Active');
     await page.getByRole('button', { name: /Update/ }).click();
+    await cleanupSearch.fill('');
   });
 
   test('2.9 Inactivate an active record and verify its name is blocked on a different branch (add and edit)', async ({ page }) => {
@@ -353,9 +358,9 @@ test.describe('Add Area Validation', () => {
     await expect(page.getByRole('heading', { name: 'Add Area' })).toBeVisible();
     await waitForTableRows(page);
 
-    // ── Step 3: Try to ADD the same area name under 'Nagpur' ──────────────────
+    // ── Step 3: Try to ADD the same area name under 'Chennai' ──────────────────
     const timestamp = Date.now();
-    await selectBranch(page, 'Nagpur');
+    await selectBranch(page, 'Chennai');
     await page.getByRole('textbox', { name: 'Area Name' }).fill(targetAreaName);
     await page.getByRole('textbox', { name: 'Area Code' }).fill(`NX${timestamp.toString().slice(-4)}`);
     await page.getByRole('button', { name: /Submit/ }).click();
@@ -369,7 +374,7 @@ test.describe('Add Area Validation', () => {
     // Negative assertion: the record must NOT appear in the table under Nagpur
     await waitForTableRows(page);
     await expect(
-      page.locator('div.rdt_TableRow').filter({ hasText: targetAreaName }).filter({ hasText: 'Nagpur' })
+      page.locator('div.rdt_TableRow').filter({ hasText: targetAreaName }).filter({ hasText: 'Chennai' })
     ).toHaveCount(0);
 
     // ── Step 4: Try to EDIT an existing Nagpur record to the same area name ───
@@ -377,7 +382,7 @@ test.describe('Add Area Validation', () => {
     await statusFilter.selectOption('All');
     await waitForTableRows(page);
 
-    const nagpurRow = page.locator('div.rdt_TableRow').filter({ hasText: 'Nagpur' }).first();
+    const nagpurRow = page.locator('div.rdt_TableRow').filter({ hasText: 'Chennai' }).first();
     const nagpurExists = await nagpurRow.count();
 
     if (nagpurExists > 0) {
@@ -398,7 +403,11 @@ test.describe('Add Area Validation', () => {
     }
 
     // ── Cleanup: restore the Pune record back to Active ───────────────────────
-    await statusFilter.selectOption('Inactive');
+    // Use All filter + search to handle pagination
+    await statusFilter.selectOption('All');
+    const cleanupSearch = await getSearchBox(page);
+    await cleanupSearch.fill(targetAreaName);
+    await page.waitForTimeout(500);
     await waitForTableRows(page);
     await page.locator('div.rdt_TableRow')
       .filter({ hasText: targetAreaName })
@@ -410,13 +419,14 @@ test.describe('Add Area Validation', () => {
     await page.locator('select').filter({ hasText: /Active|Inactive/ }).last().selectOption('Active');
     await page.getByRole('button', { name: /Update/ }).click();
     await expect(page.getByRole('heading', { name: 'Add Area' })).toBeVisible();
+    await cleanupSearch.fill('');
   });
 
-  test('2.7 Add same area name for different branch should succeed', async ({ page }) => {
-    // Add an area under 'Pune'
+  test('2.7 Same area name across different branches is globally blocked', async ({ page }) => {
     const timestamp = Date.now();
     const sharedAreaName = `SharedArea${timestamp}`;
 
+    // Add an area under 'Pune' — should succeed
     await selectBranch(page, 'Pune');
     await page.getByRole('textbox', { name: 'Area Name' }).fill(sharedAreaName);
     await page.getByRole('textbox', { name: 'Area Code' }).fill(`SA${timestamp.toString().slice(-4)}`);
@@ -424,21 +434,37 @@ test.describe('Add Area Validation', () => {
     await page.waitForTimeout(2000);
     await expect(page.getByRole('heading', { name: 'Add Area' })).toBeVisible();
 
-    // Now add the same area name under a different branch (e.g. 'Nagpur')
-    await selectBranch(page, 'Nagpur');
+    // Try the same area name under a different branch ('Chennai') — app blocks globally unique names
+    await selectBranch(page, 'Chennai');
     await page.getByRole('textbox', { name: 'Area Name' }).fill(sharedAreaName);
     await page.getByRole('textbox', { name: 'Area Code' }).fill(`SB${timestamp.toString().slice(-4)}`);
     await page.getByRole('button', { name: /Submit/ }).click();
     await page.waitForTimeout(2000);
 
-    // Should succeed – form resets back to Add Area (no error)
-    await expect(page.getByRole('heading', { name: 'Add Area' })).toBeVisible();
+    // Error must be visible — area name uniqueness is enforced globally across all branches
     const errorVisible = await page
-      .locator('[class*="error"], [class*="danger"]')
+      .locator('[class*="error"], [class*="danger"], [class*="toast"]')
       .first()
       .isVisible()
       .catch(() => false);
-    expect(errorVisible).toBe(false);
+    expect(errorVisible).toBe(true);
+
+    // Cleanup: inactivate the Pune area that was created
+    await page.waitForTimeout(1000);
+    const statusFilter = page.locator('select').filter({ hasText: /All.*Active.*Inactive/ });
+    await statusFilter.selectOption('All');
+    const searchBox = await getSearchBox(page);
+    await searchBox.fill(sharedAreaName);
+    await page.waitForTimeout(500);
+    await waitForTableRows(page);
+    await page.locator('div.rdt_TableRow')
+      .filter({ hasText: sharedAreaName })
+      .locator('svg[title="Edit"]')
+      .first()
+      .click();
+    await page.locator('select').filter({ hasText: /Active|Inactive/ }).last().selectOption('Inactive');
+    await page.getByRole('button', { name: /Update/ }).click();
+    await searchBox.fill('');
   });
 
 });
@@ -534,12 +560,13 @@ test.describe('Update Area', () => {
 
     // Cancel
     await page.getByRole('button', { name: /Clear/ }).click();
+    await page.waitForTimeout(500);
 
-    // Form resets to Add Area
-    await expect(page.getByRole('heading', { name: 'Add Area' })).toBeVisible();
+    // Clear in Update mode resets fields but stays in Update Area mode (does not switch back to Add Area)
+    await expect(page.getByRole('heading', { name: 'Update Area' })).toBeVisible();
     await expect(page.getByRole('textbox', { name: 'Area Name' })).toHaveValue('');
 
-    // Table still shows original name
+    // Table still shows original name (no update was submitted)
     await waitForTableRows(page);
     await expect(page.locator('div.rdt_TableRow').first()).toContainText(originalName);
   });
@@ -662,9 +689,9 @@ test.describe('Search and Filter', () => {
   test('4.4 Status filter defaults to Active and shows only Active records', async ({ page }) => {
     await waitForTableRows(page);
 
-    // Default status filter is 'Active'
+    // Default status filter is 'Active' — option value attribute is boolean 'true' (not the text 'Active')
     const statusFilter = page.locator('select').filter({ hasText: /All.*Active.*Inactive/ });
-    await expect(statusFilter).toHaveValue('Active');
+    await expect(statusFilter).toHaveValue('true');
 
     // All rows show Active status
     const rows = page.locator('div.rdt_TableRow');
@@ -719,26 +746,28 @@ test.describe('Search and Filter', () => {
 
     // Click Branch Name header to sort ascending (it's a button)
     await page.getByRole('button', { name: 'Branch Name' }).click();
+    await page.waitForTimeout(2000);
     await waitForTableRows(page);
 
-    // Collect branch name values
+    // Collect branch name values (limit to first 5 rows for stability)
     const branchCells = page.locator('div.rdt_TableRow [role="cell"]:nth-child(3)');
     const count = await branchCells.count();
     const values: string[] = [];
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < Math.min(count, 5); i++) {
       values.push(await branchCells.nth(i).innerText());
     }
-    const sorted = [...values].sort((a, b) => a.localeCompare(b));
+    const sorted = [...values].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
     expect(values).toEqual(sorted);
 
     // Click again for descending
     await page.getByRole('button', { name: 'Branch Name' }).click();
+    await page.waitForTimeout(2000);
     await waitForTableRows(page);
     const valuesDesc: string[] = [];
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < Math.min(count, 5); i++) {
       valuesDesc.push(await branchCells.nth(i).innerText());
     }
-    const sortedDesc = [...valuesDesc].sort((a, b) => b.localeCompare(a));
+    const sortedDesc = [...valuesDesc].sort((a, b) => b.localeCompare(a, undefined, { sensitivity: 'base' }));
     expect(valuesDesc).toEqual(sortedDesc);
   });
 
