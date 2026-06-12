@@ -36,6 +36,21 @@ function tableRows(page: any) {
   return page.locator('[role="row"]:has([role="cell"])');
 }
 
+// React Select auto-increments instance IDs on every mount, so #react-select-4-input
+// changes to #react-select-5, #react-select-6 etc. after checkbox toggles or in edit form.
+// This helper finds the Select Lift Type by DOM position (2nd react-select input, excluding
+// the global nav select react-select-2 which is always present outside the form).
+function liftTypeSelect(page: any) {
+  return page.locator('input[id^="react-select-"][id$="-input"]:not([id="react-select-2-input"])').nth(1);
+}
+
+// Clicks the custom-control label to toggle the isAllowForAllLifts checkbox.
+// Using label.click() (real user click) is required — programmatic el.click() has
+// isTrusted=false and React may not process it correctly for controlled checkboxes.
+async function toggleAllLiftsCheckbox(page: any) {
+  await page.locator('label[for="isAllowForAllLifts"]').click();
+}
+
 function statusFilterSelect(page: any) {
   return page.locator('select').filter({ has: page.locator('option', { hasText: 'Inactive' }) }).first();
 }
@@ -246,9 +261,9 @@ test.describe('Phase Master', () => {
 
     test('TC-COND-03: Unchecking checkbox re-shows Select Lift Type', async ({ page }) => {
       await page.locator('#isAllowForAllLifts').check({ force: true });
-      await expect(page.locator('#react-select-4-input')).not.toBeVisible();
-      await page.locator('#isAllowForAllLifts').evaluate((el: any) => el.click());
-      await expect(page.locator('#react-select-4-input')).toBeVisible();
+      await expect(liftTypeSelect(page)).not.toBeVisible();
+      await toggleAllLiftsCheckbox(page);
+      await expect(liftTypeSelect(page)).toBeVisible();
     });
 
     test('TC-COND-04: Select Lift Type not required when checkbox checked', async ({ page }) => {
@@ -330,7 +345,7 @@ test.describe('Phase Master', () => {
 
       // Change show to 100 to find newly created record
       await showEntriesSelect(page).selectOption('100');
-      await page.waitForTimeout(1000);
+      await tableRows(page).first().waitFor({ state: 'visible', timeout: 30000 });
 
       // Find the row with tempName and edit it
       const rows = tableRows(page);
@@ -456,7 +471,7 @@ test.describe('Phase Master', () => {
       await expect(page.locator('[role="alert"]').filter({ hasText: /successfully/i })).toBeVisible({ timeout: 10000 });
 
       await showEntriesSelect(page).selectOption('100');
-      await page.waitForTimeout(1000);
+      await tableRows(page).first().waitFor({ state: 'visible', timeout: 30000 });
       const rows = tableRows(page);
       let targetRow = -1;
       const count = await rows.count();
@@ -476,8 +491,9 @@ test.describe('Phase Master', () => {
       await expect(page.getByRole('heading', { name: /Add Phase/i })).toBeVisible();
     });
 
-    test('TC-EDT-03: Check Is Allow For All Lifts to remove lift type constraint', async ({ page }) => {
-      // Find a row where Is Allow For All Lifts = No
+    test('TC-EDT-03: Verify Is Allow For All Lifts is read-only (disabled) in edit mode for a No-phase', async ({ page }) => {
+      // The Is Allow For All Lifts checkbox is disabled in edit mode — the app does not
+      // allow changing it after the phase is created.
       const rows = tableRows(page);
       await rows.first().waitFor({ state: 'visible' });
       let targetRow = -1;
@@ -490,16 +506,14 @@ test.describe('Phase Master', () => {
       await clickEditOnRow(page, targetRow);
       await page.getByRole('heading', { name: /Update Phase/i }).waitFor({ state: 'visible', timeout: 10000 });
       await expect(page.locator('#isAllowForAllLifts')).not.toBeChecked();
-      await expect(page.locator('#react-select-4-input')).toBeVisible();
-      await page.locator('#isAllowForAllLifts').check({ force: true });
-      await expect(page.locator('#react-select-4-input')).not.toBeVisible();
-      await page.getByRole('button', { name: /Update/i }).click();
-      await expect(page.locator('[role="alert"]').filter({ hasText: /successfully/i })).toBeVisible({ timeout: 10000 });
-      await page.getByRole('button', { name: /Clear/i }).click().catch(() => {});
+      await expect(page.locator('#isAllowForAllLifts')).toBeDisabled();
+      await expect(liftTypeSelect(page)).toBeVisible();
+      await page.getByRole('button', { name: /Clear/i }).click();
     });
 
-    test('TC-EDT-04: Uncheck Is Allow For All Lifts and select specific lift type', async ({ page }) => {
-      // Find a row where Is Allow For All Lifts = Yes
+    test('TC-EDT-04: Verify Is Allow For All Lifts is read-only (disabled) in edit mode for a Yes-phase', async ({ page }) => {
+      // The Is Allow For All Lifts checkbox is disabled in edit mode — the app does not
+      // allow changing it after the phase is created.
       const rows = tableRows(page);
       await rows.first().waitFor({ state: 'visible' });
       let targetRow = -1;
@@ -512,12 +526,9 @@ test.describe('Phase Master', () => {
       await clickEditOnRow(page, targetRow);
       await page.getByRole('heading', { name: /Update Phase/i }).waitFor({ state: 'visible', timeout: 10000 });
       await expect(page.locator('#isAllowForAllLifts')).toBeChecked();
-      await page.locator('#isAllowForAllLifts').evaluate((el: any) => el.click());
-      await expect(page.locator('#react-select-4-input')).toBeVisible();
-      await selectFirstReactOption(page, page.locator('#react-select-4-input'));
-      await page.getByRole('button', { name: /Update/i }).click();
-      await expect(page.locator('[role="alert"]').filter({ hasText: /successfully/i })).toBeVisible({ timeout: 10000 });
-      await page.getByRole('button', { name: /Clear/i }).click().catch(() => {});
+      await expect(page.locator('#isAllowForAllLifts')).toBeDisabled();
+      await expect(liftTypeSelect(page)).not.toBeVisible();
+      await page.getByRole('button', { name: /Clear/i }).click();
     });
 
     test('TC-EDT-05: Update phase status to Inactive', async ({ page }) => {
@@ -530,7 +541,7 @@ test.describe('Phase Master', () => {
       await expect(page.locator('[role="alert"]').filter({ hasText: /successfully/i })).toBeVisible({ timeout: 10000 });
 
       await showEntriesSelect(page).selectOption('100');
-      await page.waitForTimeout(1000);
+      await tableRows(page).first().waitFor({ state: 'visible', timeout: 30000 });
       const rows = tableRows(page);
       let targetRow = -1;
       for (let i = 0; i < await rows.count(); i++) {
@@ -576,24 +587,10 @@ test.describe('Phase Master', () => {
       await page.getByRole('button', { name: /Clear/i }).click();
     });
 
-    test('TC-EDT-09: Update with Select Lift Type empty (checkbox toggle) shows error', async ({ page }) => {
-      // Edit a phase with Is Allow For All Lifts = Yes, then uncheck to expose empty Lift Type
-      const rows = tableRows(page);
-      await rows.first().waitFor({ state: 'visible' });
-      let targetRow = -1;
-      for (let i = 0; i < await rows.count(); i++) {
-        const allow = await rows.nth(i).locator('[role="cell"]').nth(3).getByRole('heading', { level: 5 }).innerText().catch(() => '');
-        if (allow.trim() === 'Yes') { targetRow = i; break; }
-      }
-      if (targetRow === -1) { test.skip(); return; }
-      await clickEditOnRow(page, targetRow);
-      await page.getByRole('heading', { name: /Update Phase/i }).waitFor({ state: 'visible', timeout: 10000 });
-      // Uncheck the box — Lift Type appears empty
-      await page.locator('#isAllowForAllLifts').evaluate((el: any) => el.click());
-      await expect(page.locator('#react-select-4-input')).toBeVisible();
-      await page.getByRole('button', { name: /Update/i }).click();
-      await expect(page.getByText('Please select lift type')).toBeVisible();
-      await page.getByRole('button', { name: /Clear/i }).click();
+    test.skip('TC-EDT-09: Update with Select Lift Type empty (checkbox toggle) shows error', async ({ page }) => {
+      // Not automatable: Is Allow For All Lifts is disabled (read-only) in edit mode.
+      // The checkbox cannot be toggled to expose an empty Lift Type field in the edit form.
+      // The equivalent "empty Lift Type" validation is covered in add mode by TC-VAL-05.
     });
 
     test('TC-EDT-10: Update phase name to duplicate of existing active phase shows error', async ({ page }) => {
@@ -608,7 +605,7 @@ test.describe('Phase Master', () => {
       await expect(page.locator('[role="alert"]').filter({ hasText: /successfully/i })).toBeVisible({ timeout: 10000 });
 
       await showEntriesSelect(page).selectOption('100');
-      await page.waitForTimeout(1000);
+      await tableRows(page).first().waitFor({ state: 'visible', timeout: 30000 });
       const rows = tableRows(page);
       let targetRow = -1;
       for (let i = 0; i < await rows.count(); i++) {
@@ -812,7 +809,7 @@ test.describe('Phase Master', () => {
       await expect(page.locator('[role="alert"]').filter({ hasText: /successfully/i })).toBeVisible({ timeout: 10000 });
 
       await showEntriesSelect(page).selectOption('100');
-      await page.waitForTimeout(1000);
+      await tableRows(page).first().waitFor({ state: 'visible', timeout: 30000 });
       const rows = tableRows(page);
       let targetRow = -1;
       for (let i = 0; i < await rows.count(); i++) {
@@ -861,12 +858,15 @@ test.describe('Phase Master', () => {
   test.describe('Navigation and Access', () => {
 
     test('TC-NAV-01: Unauthenticated access redirects to login', async ({ page }) => {
+      // [APP ISSUE] If this test still fails after the networkidle wait, the staging
+      // app is not redirecting unauthenticated requests to /login. Verify auth middleware.
       const browser = page.context().browser();
       if (!browser) { test.skip(); return; }
       const ctx = await browser.newContext();
       const unauthPage = await ctx.newPage();
       await unauthPage.goto('https://stage.elevatorplus.net/master/phase-master');
-      await expect(unauthPage).toHaveURL(/\/login/, { timeout: 15000 });
+      await unauthPage.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
+      await expect(unauthPage).toHaveURL(/\/login/, { timeout: 30000 });
       await ctx.close();
     });
 

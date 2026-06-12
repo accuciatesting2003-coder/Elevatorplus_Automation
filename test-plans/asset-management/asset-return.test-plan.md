@@ -177,7 +177,7 @@
 ### TC-AR-031: Returned asset appears in Asset Report with correct status
 - Complete a return with status "Good"
 - Navigate to Asset Report > Inventory
-- Verify the returned asset appears with the status "Good"
+- Verify the returned asset appears with the status selected while returning the asset
 
 ### TC-AR-032: Assigned quantity decreases after return
 - Note assigned qty before return

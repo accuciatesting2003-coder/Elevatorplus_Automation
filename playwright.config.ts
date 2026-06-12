@@ -10,9 +10,10 @@ dotenv.config({ path: envFile });
 
 export default defineConfig({
   testDir: './tests',
+  globalTeardown: './global-teardown',
 
   // Timeout settings
-  timeout: 180 * 1000, // 180 seconds per test (staging can be slow; WAT navigation up to 120s)
+  timeout: 300 * 1000, // 300 seconds per test (staging can be slow; navigation up to 120s + slow submit operations)
   expect: {
     timeout: 10 * 1000, // 10 seconds for assertions
   },

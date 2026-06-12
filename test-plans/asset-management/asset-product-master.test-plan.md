@@ -98,7 +98,7 @@
 - Verify success message
 - Verify all field values appear correctly in the entries list
 
-### TC-APM-017: Quantity accepts only numeric values
+### TC-APM-017: Quantity accepts only numeric  and decimal values
 - Enter a non-numeric value (e.g., "abc") in Quantity
 - Verify validation error or field rejects non-numeric input
 
