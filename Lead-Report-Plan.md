@@ -28,10 +28,13 @@ The Lead Report module is a central hub for tracking and analyzing leads. It pro
 | 3.6 | Search | Search with no results found | Negative |
 | **4** | **Data Table & Grid** | | |
 | 4.1 | Grid | Verify visibility of all 14 mandatory columns | Positive |
-| 4.2 | Grid | Verify data formatting (Dates, Phone Numbers, Email links) | Positive |
-| 4.3 | Grid | Column Sorting (Ascending/Descending for Name, Date, Status) | Positive |
-| 4.4 | Grid | Tooltips for long text (Notes, Firm Address) | Positive |
-| 4.5 | Grid | Sr. No. increments correctly across pages | Positive |
+| 4.2 | Grid | **Manage Columns:** Toggle column visibility (Hide/Show specific columns) | Positive |
+| 4.3 | Grid | **Manage Columns:** Verify "Select All" / "Reset" in column management | Positive |
+| 4.4 | Grid | **View Details:** Verify clicking "View" icon/option opens lead details | Positive |
+| 4.5 | Grid | Verify data formatting (Dates, Phone Numbers, Email links) | Positive |
+| 4.6 | Grid | Column Sorting (Ascending/Descending for Name, Date, Status) | Positive |
+| 4.7 | Grid | Tooltips for long text (Notes, Firm Address) | Positive |
+| 4.8 | Grid | Sr. No. increments correctly across pages | Positive |
 | **5** | **Export Feature** | | |
 | 5.1 | Export | Export full dataset to Excel | Positive |
 | 5.2 | Export | Export filtered dataset (Date + Status) | Positive |
@@ -109,3 +112,5 @@ The Lead Report module is a central hub for tracking and analyzing leads. It pro
 *   **9.5. Salesperson Filter Integration with Status Cards:** Verify that selecting a specific Salesperson updates the counts on all Status Cards to reflect only that salesperson's performance.
 *   **9.6. Status Filter Integration (Listing, Cards, and Export):** Apply any status filter (e.g., "In Progress"); verify that the table listings update correctly, the table count matches the number of rows, the corresponding Status Card reflects the same count, and the exported Excel file contains identical data and totals.
 *   **9.7. Baseline vs. Filtered Count Synchronization:** Before applying any filter, note the total listing count and status card counts. Apply a filter (e.g., specific date range) and verify that both the table listing and status cards update to reflect the subset of data accurately compared to the baseline.
+
+
