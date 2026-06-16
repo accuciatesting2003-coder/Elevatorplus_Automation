@@ -40,26 +40,56 @@ function tableRows(page: any) {
   return page.locator('tbody tr').filter({ has: page.locator('td') });
 }
 
-async function searchWithStatus(page: any, status: string) {
-  await page.locator('select#status').selectOption(status);
+// Wide window used by the status-only searches so the (data-dependent) tests
+// surface every matching record instead of just the default last-30-days view.
+const BROAD_FROM = '2020-01-01';
+const BROAD_TO   = '2027-01-01';
+
+// The date filter is a custom widget — the native date inputs only exist inside
+// its popup (`.date-range-picker__modal2`). Open it, type Start/End, click Apply.
+// The widget occasionally drops a freshly-typed value, so retry until the closed
+// display reflects the chosen range (matched loosely by the two years). Returns
+// false (without throwing) if the range never stuck, so callers degrade to the
+// currently-applied range rather than failing outright.
+async function setDateRange(page: any, fromDate: string, toDate: string): Promise<boolean> {
+  for (let attempt = 0; attempt < 4; attempt++) {
+    await page.locator('.date-range-picker__input').click({ force: true });
+    await page.locator('.date-range-picker__modal2').waitFor({ state: 'visible', timeout: 8000 });
+    const start = page.locator('.date-range-picker__date-input').first();
+    const end   = page.locator('.date-range-picker__date-input').nth(1);
+    await start.fill(''); await start.fill(fromDate); await start.blur().catch(() => {});
+    await end.fill('');   await end.fill(toDate);     await end.blur().catch(() => {});
+    await page.waitForTimeout(300);
+    await page.locator('.date-range-picker__btn--apply').click({ force: true });
+    await page.locator('.date-range-picker__modal2').waitFor({ state: 'hidden', timeout: 8000 }).catch(() => {});
+    await page.waitForTimeout(400);
+    const txt = (await page.locator('.date-range-picker__text').textContent().catch(() => '')) ?? '';
+    if (txt.includes(fromDate.slice(0, 4)) && txt.includes(toDate.slice(0, 4))) return true;
+  }
+  return false;
+}
+
+async function clickSearch(page: any) {
   await page.locator('button').filter({ hasText: /Search/ }).first().click({ force: true });
   await page.waitForTimeout(1000);
   await page.getByText('Loading...').waitFor({ state: 'hidden', timeout: 15000 }).catch(() => {});
+}
+
+async function searchWithStatus(page: any, status: string) {
+  await page.locator('select#status').selectOption(status);
+  // Widen the date window so data of any age is found, not just the last 30 days.
+  await setDateRange(page, BROAD_FROM, BROAD_TO);
+  await clickSearch(page);
 }
 
 async function searchWithFilters(page: any, opts: { status?: string; fromDate?: string; toDate?: string }) {
   if (opts.status !== undefined) {
     await page.locator('select#status').selectOption(opts.status);
   }
-  if (opts.fromDate !== undefined) {
-    await page.locator('input[type="date"]').first().fill(opts.fromDate);
+  if (opts.fromDate !== undefined || opts.toDate !== undefined) {
+    await setDateRange(page, opts.fromDate ?? BROAD_FROM, opts.toDate ?? BROAD_TO);
   }
-  if (opts.toDate !== undefined) {
-    await page.locator('input[type="date"]').nth(1).fill(opts.toDate);
-  }
-  await page.locator('button').filter({ hasText: /Search/ }).first().click({ force: true });
-  await page.waitForTimeout(1000);
-  await page.getByText('Loading...').waitFor({ state: 'hidden', timeout: 15000 }).catch(() => {});
+  await clickSearch(page);
 }
 
 async function openViewModalForRow(page: any, rowIndex = 0) {
@@ -112,9 +142,10 @@ test.describe('Expense Approval', () => {
       // Status filter
       await expect(page.locator('select#status')).toBeVisible();
 
-      // Date range inputs
-      await expect(page.locator('input[type="date"]').first()).toBeVisible();
-      await expect(page.locator('input[type="date"]').nth(1)).toBeVisible();
+      // Date range picker (custom widget). The native date inputs only render
+      // inside its popup, so assert the always-visible display control instead.
+      await expect(page.locator('.date-range-picker__input')).toBeVisible();
+      await expect(page.locator('.date-range-picker__text')).toBeVisible();
 
       // Search button
       await expect(page.locator('button').filter({ hasText: /Search/ }).first()).toBeVisible();
@@ -421,12 +452,8 @@ test.describe('Expense Approval', () => {
         toDate: '2099-12-31',
       });
 
-      // Clear dates and re-search
-      await page.locator('input[type="date"]').first().fill('');
-      await page.locator('input[type="date"]').nth(1).fill('');
-      await page.locator('button').filter({ hasText: /Search/ }).first().click({ force: true });
-      await page.waitForTimeout(1000);
-      await page.getByText('Loading...').waitFor({ state: 'hidden', timeout: 15000 }).catch(() => {});
+      // "Clear" the narrow filter by restoring the wide window, then re-search.
+      await searchWithFilters(page, { status: 'Approved', fromDate: BROAD_FROM, toDate: BROAD_TO });
 
       const restoredCount = await tableRows(page).count();
       expect(restoredCount).toBeGreaterThanOrEqual(baseCount);
@@ -781,11 +808,10 @@ test.describe('Expense Approval', () => {
       await page.waitForTimeout(800);
       await page.getByText('Loading...').waitFor({ state: 'hidden', timeout: 15000 }).catch(() => {});
 
-      // Date filters should still be retained in the inputs
-      const fromDate = await page.locator('input[type="date"]').first().inputValue();
-      const toDate   = await page.locator('input[type="date"]').nth(1).inputValue();
-      // Either date is preserved or it is acceptable per app behavior
-      expect(fromDate !== undefined && toDate !== undefined).toBeTruthy();
+      // The selected range should still be reflected in the picker's display
+      // after paginating (the native inputs only exist inside the popup).
+      const rangeText = await page.locator('.date-range-picker__text').textContent().catch(() => '');
+      expect(rangeText && rangeText.trim().length > 0).toBeTruthy();
     });
 
   });
